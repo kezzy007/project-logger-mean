@@ -1,0 +1,29 @@
+<form #userForm="ngForm" (ngSubmit)="onSubmit()">
+    <p class="h4 text-center mb-4">Sign In</p>
+
+    <!-- Material input email -->
+    <div class="md-form">
+        <i class="fa fa-exclamation-triangle prefix grey-text"></i>
+        <input type="email" 
+                id="materialFormRegisterConfirmEx" 
+                class="form-control"
+                [(ngModel)]="user.email" 
+                name="email">
+        <label for="materialFormRegisterConfirmEx">Your email</label>
+    </div>
+
+    <!-- Material input password -->
+    <div class="md-form">
+        <i class="fa fa-lock prefix grey-text"></i>
+        <input type="password" 
+                id="materialFormRegisterPasswordEx" 
+                class="form-control"
+                [(ngModel)]="user.password"
+                name="password">
+        <label for="materialFormRegisterPasswordEx">Your password</label>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" type="submit" [disabled]="userForm.form.invalid" >Register</button>
+    </div>
+</form>
