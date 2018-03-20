@@ -1,0 +1,61 @@
+<div class="card">
+<!-- Project Title section -->
+  <div class="card-title">
+    <div class="col-md-3">
+      Projects
+    </div>
+
+    <div class="col-md-3 align-right">
+      <button class="btn btn-success" @click="addProject()">
+        <i class="fa fa-plus" aria-hidden="true"> New project
+      </button>
+    </div>
+  </div>
+  <!-- End title section -->
+
+  <!-- Project body -->
+  <div class="card-body" *ngIf="projects">
+    
+    <!-- Single project with logs -->
+    <div class="row" *ngFor="let project of projects">                
+      <!-- Collapse buttons -->
+      <div>
+          <!-- <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              Link with href
+          </a> -->
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            {{ project.title }}
+          </button>
+          <br/>
+          <div class="grey-text">
+            {{ project.description }}
+          </div>
+      </div>
+      <!-- / Collapse buttons -->
+
+      <!-- Collapsible element -->
+      <div class="collapse" id="collapseExample">
+          <div class="mt-3" *ngFor="let log of project.logs">
+            
+            <div class="row">  
+              <div class="col-md-4">
+                {{ logs.log_message }} 
+              </div>
+              
+              <div class="col-md-4">
+                by {{ log.user.name }} 
+                <span class="badge badge-pill red">{{ log.user.role }}</span>
+              </div>
+            </div>
+
+          </div>
+      </div>
+      <!-- / Collapsible element -->
+
+  </div>
+  <!-- End of project render -->
+
+  <!-- Modal component -->
+  <app-modal [projectProps]="projectProps" *ngIf="displayModal"></app-modal>
+
+</div>

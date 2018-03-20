@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
 
+const ROLES = { ROLE_ADMIN: 'ADMIN', ROLE_USER:'USER' };
 
 const userSchema = mongoose.Schema({
     name:{
@@ -14,10 +15,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    username:{
+    role:{
         type: String,
         required: true
-    }
+    },
 });
 
 const User = module.exports = mongoose.model('User',userSchema);

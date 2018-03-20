@@ -1,9 +1,16 @@
 const express = require('express');
 const router = express.Router();
+
+// Models
 const User = require('../models/user');
+const Logs = require('../models/logs');
+
+// Authentication modules
 const passport = require('passport');
 const config = require('../config/database');
 const jwt = require('jsonwebtoken');
+
+const ROLE_ADMIN = 'ADMIN';
 
 router.post('/register', (req, res, next) => {
 
@@ -11,10 +18,9 @@ router.post('/register', (req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         username: req.body.username,
-        password: req.body.password 
+        password: req.body.password,
+        role: req.body.role 
     });
-
-    
 
     User.addUser(newUser, (err, user) => {
 
@@ -53,7 +59,8 @@ router.post('/authenticate', (req, res, next) => {
                         "_id": user._id,
                         "name": user.name,
                         "email": user.email,
-                        "username": user.username
+                        "username": user.username,
+                        "role": user.role
                     };
 
                     // Create token
@@ -64,13 +71,7 @@ router.post('/authenticate', (req, res, next) => {
                    return res.json({
                         success: true,
                         token: 'bearer '+ token,
-                        user: {
-                            id: user._id,
-                            name: user.name,
-                            username: user.username,
-                            email: user.email,
-
-                        }
+                        user: tempUser
                     });
 
                 }
@@ -86,10 +87,45 @@ router.post('/authenticate', (req, res, next) => {
 
 });
 
-router.post('/profile', passport.authenticate('jwt', {session:false}), (req, res,next) => {
+router.post('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
     return res.json({
         user : req.user
+    });
+
+});
+
+router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res, next) => {
+
+    if(req.body.user.role !== ROLE_ADMIN)
+        return res.json({success:false, message:"Unauthorized"});
+
+
+    Logs.getLogs((err, logs) => {
+
+        if(err) throw err;
+        else
+        return res.json(logs);
+
+    });
+
+});
+
+router.post('/add-project', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    const project = req.body.project;
+    Projects.addProject(project, (err, project) => {
+
+        if(err) throw err;
+
+        if(project){
+            return res.json({success: true, message: 'Projects saved', project: project});
+            
+        }
+        else{
+            return res.json({success:false, message: 'Could not save'});
+        }
+
     });
 
 });
