@@ -1,5 +1,7 @@
-import { NgModule, CommonModule } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared.module';
+import { RouterModule, Router } from '@angular/router';
 
 import { DashboardComponent } from './dashboard.component';
 import { ProjectsComponent } from './components/projects/projects.component';
@@ -7,15 +9,17 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { UsersComponent } from './components/users/users.component';
 
 @NgModule({
-    declarations:[
+    declarations: [
         DashboardComponent,
         ProjectsComponent,
         ProfileComponent,
         UsersComponent
     ],
-    imports:[
-        SharedModule
+    imports: [
+        SharedModule,
+        CommonModule,
+        RouterModule
     ]
 })
 
-export class DashboardModule{}
+export class DashboardModule {}

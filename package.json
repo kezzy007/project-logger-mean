@@ -15,12 +15,13 @@
     "g": "^2.0.1",
     "jsonwebtoken": "*",
     "mongoose": "*",
+    "mongoose-timestamp": "^0.6.0",
     "passport": "*",
     "passport-jwt": "^3.0.1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.17.1"
+    "nodemon": "^1.17.2"
   }
 }

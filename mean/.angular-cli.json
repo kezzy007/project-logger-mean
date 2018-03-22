@@ -25,7 +25,9 @@
         "./styles.scss"
       ],
       "scripts": [
-        "../node_modules/hammerjs/hammer.min.js"
+        "../node_modules/hammerjs/hammer.min.js",
+        "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/angular-bootstrap-md"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

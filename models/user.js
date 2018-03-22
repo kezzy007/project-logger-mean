@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
+const Timestamp = mongoose.mongo.Timestamp;
 
 const ROLES = { ROLE_ADMIN: 'ADMIN', ROLE_USER:'USER' };
 

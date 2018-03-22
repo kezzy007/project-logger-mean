@@ -1,15 +1,21 @@
-import { NgModule, CommonModule } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
 
-    imports:[
-        
+    imports: [
+        CommonModule,
+        FormsModule,
+        MDBBootstrapModule.forRoot()
     ],
-    exports:[
-        ModalComponent
+    exports: [
+        ModalComponent,
+        MDBBootstrapModule
     ],
-    declarations:[
+    declarations: [
         ModalComponent
     ]
 

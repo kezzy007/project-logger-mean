@@ -36,15 +36,23 @@ export class LoginComponent implements OnInit {
 
           this.storeTokenInLocalStorage(response.token);
 
+          this.storeUserInLocalStorage(response.user);
+
           this.router.navigateByUrl('/dashboard');
 
         });
 
   }
 
-  storeTokenInLocalStorage(token){
+  storeTokenInLocalStorage(token) {
 
     window.localStorage.setItem('token', token);
+
+  }
+
+  storeUserInLocalStorage(user) {
+
+    window.localStorage.setItem('user', JSON.stringify(user));
 
   }
 
