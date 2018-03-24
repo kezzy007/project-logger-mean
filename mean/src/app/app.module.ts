@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from './shared.module';
 import { DashboardModule } from './components/dashboard/dashboard.module';
@@ -38,7 +37,6 @@ const routes: Routes = [
     HttpClientModule,
     SharedModule,
     DashboardModule,
-    MDBBootstrapModule.forRoot(),
     RouterModule.forRoot(routes)
   ],
   providers: [
