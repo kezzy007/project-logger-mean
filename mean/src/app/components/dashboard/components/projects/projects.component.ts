@@ -13,6 +13,7 @@ export class ProjectsComponent implements OnInit {
   projects = null;
   projectProps;
   displayModal = false;
+  currentProject;
   EVENTS = {
     ADD_PROJECT: 'add_project'
   };
@@ -61,17 +62,35 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  saveProject($event) {
+  saveOperation($event) {
     console.log($event);
 
-    delete $event['op_type'];
+    switch ($event['op_type']) {
+      case this.allOpTypes.addProject:
+        this.saveProject($event);
+    }
 
-    this.projectsService.saveProject($event)
+  }
+
+  saveProject(project) {
+
+    delete project['op_type'];
+
+    this.projectsService.saveProject(project)
         .subscribe((response) => {
 
           console.log(response);
 
 
         });
+
   }
+
+  logFor(project) {
+
+    this.currentProject = project;
+
+    this.projectProps.project = project;
+  }
+
 }

@@ -1,29 +1,28 @@
-<nav class="navbar navbar-expand-lg navbar-dark primary-color">
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark indigo">
+           
+    <!-- Navbar brand -->
+    <logo><a class="navbar-brand" [routerLink]="['/']">Project Logger</a></logo>
 
-  <!-- Navbar brand -->
-  <a class="navbar-brand" [routerLink]="['/']">Project Logger</a>
+    <!-- Collapsible content -->
+    <links>
 
-  <!-- Collapse button -->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-  </button>
+        <!-- Links -->
+        <ul class="navbar-nav mr-auto"  [routerLinkActive]="['active']">
+            <li class="nav-item active">
+                <a class="nav-link waves-light" [routerLink]="['/']" mdbRippleRadius>Home<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link waves-light" [routerLink]="['/login']" mdbRippleRadius>Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link waves-light" [routerLink]="['/register']" mdbRippleRadius>Register</a>
+            </li>
 
-  <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav" [routerLinkActive]="['active']">
-          <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/']">Home <span class="sr-only">(current)</span></a>
-          </li>
-      </ul>
-      <ul>
-          <li class="nav-item" >
-              <a class="nav-link" [routerLink]="['/login']">Login</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/register']">Register</a>
-          </li>
-      </ul>
-  </div>
+        </ul>
+        <!-- Links -->
 
-</nav>
+    </links>
+    <!-- Collapsible content -->
+
+</mdb-navbar>
 <!--/.Navbar-->
