@@ -9,14 +9,18 @@ const projectsSchema = mongoose.Schema({
     description:{
         type:String,
         required:true
+    },
+    logs:{
+        type: Object,
+        required: false
     }
 
 });
 
 const Projects = module.exports = mongoose.model('Projects', projectsSchema);
 
-module.exports.addProject = (project, callback) => {
-
-    Projects.insertOne(project, callback);
+module.exports.getProjects = (callback) => {
+    
+    Projects.find({}, callback);
 
 };

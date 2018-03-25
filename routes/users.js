@@ -4,6 +4,7 @@ const router = express.Router();
 // Models
 const User = require('../models/user');
 const Logs = require('../models/logs');
+const Projects = require('../models/projects');
 
 // Authentication modules
 const passport = require('passport');
@@ -97,24 +98,27 @@ router.post('/profile', passport.authenticate('jwt', {session:false}), (req, res
 
 router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res, next) => {
 
-    if(req.body.user.role !== ROLE_ADMIN)
+
+    if(req.body.user.role.toUpperCase() !== ROLE_ADMIN)
         return res.json({success:false, message:"Unauthorized"});
 
+    // This returns all the projects for the admin
+    Projects.getProjects((err, projects) => {
 
-    Logs.getLogs((err, logs) => {
-
-        if(err) throw err;
-        else
-        return res.json(logs);
+            if(err) throw err;
+            
+            return res.json({success: true, projectsAndLogs: projects});
 
     });
 
 });
 
-router.post('/add-project', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+router.post('/save-project', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
-    const project = req.body.project;
-    Projects.addProject(project, (err, project) => {
+    const project = new Projects(req.body.project);
+
+
+    project.save((err, project) => {
 
         if(err) throw err;
 

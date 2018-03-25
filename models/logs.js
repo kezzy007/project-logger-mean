@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const timestamps = require('mongoose-timestamp');
 
 const LogsSchema = mongoose.Schema({
 
@@ -15,12 +15,10 @@ const LogsSchema = mongoose.Schema({
         type:Object,
         required:true
     },
-    "logged_time":{
-        type: Timestamp,
-        required: true
-    }
-
+    
 });
+
+LogsSchema.plugin(timestamps);
 
 const Logs = module.exports = mongoose.model('Logs',LogsSchema);
 

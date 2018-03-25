@@ -4,6 +4,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from './shared.module';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 
 
@@ -35,6 +36,7 @@ const routes: Routes = [
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    MDBBootstrapModule.forRoot(),
     SharedModule,
     DashboardModule,
     RouterModule.forRoot(routes)

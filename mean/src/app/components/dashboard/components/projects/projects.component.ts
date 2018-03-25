@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ProjectsService } from './services/projects.service';
 
+
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
@@ -8,17 +9,32 @@ import { ProjectsService } from './services/projects.service';
 })
 export class ProjectsComponent implements OnInit {
 
-  projectAndLogs;
-  projects;
-  projectProps = {title: '', description: ''};
+  projectsAndLogs: Array<any>;
+  projects = null;
+  projectProps;
   displayModal = false;
   EVENTS = {
     ADD_PROJECT: 'add_project'
   };
 
+  allOpTypes = {
+    addLog: 'addLog',
+    addProject: 'addProject',
+    viewLog: 'viewLog',
+    assignUsers: 'assignUsers',
+    addUser: 'addUser',
+    editUser: 'editUser',
+  };
+
+  showModal = false;
+
   @Output() projectsEvent = new EventEmitter<any>();
 
-  constructor(private projectsService: ProjectsService) { }
+  constructor(private projectsService: ProjectsService) { 
+
+      this.initializeInstanceVariables();
+
+  }
 
   ngOnInit() {
 
@@ -31,13 +47,31 @@ export class ProjectsComponent implements OnInit {
     this.projectsService.getProjectsAndLogs()
         .subscribe( (response) => {
             console.log(response);
-            this.projectAndLogs = response;
-        });
+
+              this.projectsAndLogs = response['projectsAndLogs'];
+
+        },
+        (error) => console.log(error.response));
   }
 
-  addProject() {
+  initializeInstanceVariables() {
 
-    this.displayModal = true;
+    this.projectsAndLogs = [];
+    this.projectProps = {title: '', description: '', op_type: this.allOpTypes.addProject};
 
+  }
+
+  saveProject($event) {
+    console.log($event);
+
+    delete $event['op_type'];
+
+    this.projectsService.saveProject($event)
+        .subscribe((response) => {
+
+          console.log(response);
+
+
+        });
   }
 }
