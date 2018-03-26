@@ -9,10 +9,6 @@ const projectsSchema = mongoose.Schema({
     description:{
         type:String,
         required:true
-    },
-    logs:{
-        type: Object,
-        required: false
     }
 
 });

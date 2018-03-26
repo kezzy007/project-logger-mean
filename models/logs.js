@@ -7,8 +7,8 @@ const LogsSchema = mongoose.Schema({
         type:String,
         required: true
     },
-    "project":{
-        type:Object,
+    "project_id":{
+        type:String,
         required:true
     },
     "user":{
@@ -24,6 +24,6 @@ const Logs = module.exports = mongoose.model('Logs',LogsSchema);
 
 module.exports.getLogs = (callback) => {
 
-    Logs.find(callback);
+    Logs.find({}, callback);
 
 };

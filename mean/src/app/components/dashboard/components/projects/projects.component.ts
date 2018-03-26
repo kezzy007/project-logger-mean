@@ -1,6 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ProjectsService } from './services/projects.service';
 
+interface Iresponse {
+  success: string;
+  log?: Object;
+  projects?: Array<{}>;
+  logs?: Array<{}>;
+}
 
 @Component({
   selector: 'app-projects',
@@ -9,10 +15,9 @@ import { ProjectsService } from './services/projects.service';
 })
 export class ProjectsComponent implements OnInit {
 
-  projectsAndLogs: Array<any>;
-  projects = null;
+  projects;
+  logs;
   projectProps;
-  displayModal = false;
   currentProject;
   EVENTS = {
     ADD_PROJECT: 'add_project'
@@ -31,7 +36,7 @@ export class ProjectsComponent implements OnInit {
 
   @Output() projectsEvent = new EventEmitter<any>();
 
-  constructor(private projectsService: ProjectsService) { 
+  constructor(private projectsService: ProjectsService) {
 
       this.initializeInstanceVariables();
 
@@ -46,10 +51,11 @@ export class ProjectsComponent implements OnInit {
   getProjectsAndLogs() {
 
     this.projectsService.getProjectsAndLogs()
-        .subscribe( (response) => {
+        .subscribe( (response: Iresponse) => {
             console.log(response);
 
-              this.projectsAndLogs = response['projectsAndLogs'];
+              this.projects = response.projects;
+              this.logs = response.logs;
 
         },
         (error) => console.log(error.response));
@@ -57,8 +63,13 @@ export class ProjectsComponent implements OnInit {
 
   initializeInstanceVariables() {
 
-    this.projectsAndLogs = [];
-    this.projectProps = {title: '', description: '', op_type: this.allOpTypes.addProject};
+    this.projects = [];
+    this.logs = [];
+    this.projectProps = {
+      title: '',
+      description: '',
+      log_text: '',
+      op_type: null};
 
   }
 
@@ -66,9 +77,32 @@ export class ProjectsComponent implements OnInit {
     console.log($event);
 
     switch ($event['op_type']) {
+
       case this.allOpTypes.addProject:
         this.saveProject($event);
+        break;
+
+      case this.allOpTypes.addLog:
+        this.saveLogForProject($event);
+        break;
+
+      default:
+      break;
     }
+
+  }
+
+  addNewProjectModal() {
+
+    this.projectProps.op_type = this.allOpTypes.addProject;
+
+    this.displayModal();
+
+  }
+
+  displayToast(message){
+
+
 
   }
 
@@ -79,10 +113,39 @@ export class ProjectsComponent implements OnInit {
     this.projectsService.saveProject(project)
         .subscribe((response) => {
 
-          console.log(response);
+          if(response.success) {
+            this.projects.push(response['project']);
+            console.log(response);
+            this.displayToast('Project created');
 
+            return;
+          }
+
+          this.displayToast('Operation failed');
 
         });
+  }
+
+  saveLogForProject(log) {
+
+    const logobject = {
+      'project_id': this.currentProject._id,
+      'user': this.getUser(),
+      'log_message': log.log_text
+    };
+
+    this.projectsService.saveLogForProject(logobject)
+        .subscribe((response: Iresponse) => {
+
+          console.log(response);
+          this.logs.push(response.log);
+
+        });
+  }
+
+  getUser() {
+
+    return JSON.parse(localStorage.getItem('user'));
 
   }
 
@@ -90,7 +153,25 @@ export class ProjectsComponent implements OnInit {
 
     this.currentProject = project;
 
-    this.projectProps.project = project;
+    this.projectProps.op_type = this.allOpTypes.addLog;
+
+    this.displayModal();
+
   }
 
+  logTrackFunction(index) {
+    return index;
+  }
+
+  displayModal() {
+    this.showModal = true;
+  }
+
+  showBsCollapse() {}
+
+  shownBsCollapse() {}
+
+  hideBsCollapse() {}
+
+  hiddenBsCollapse() {}
 }

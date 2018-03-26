@@ -107,7 +107,13 @@ router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res
 
             if(err) throw err;
             
-            return res.json({success: true, projectsAndLogs: projects});
+            Logs.getLogs((err, logs) => {
+
+                if(err) throw err;
+
+                return res.json({success: true, projects: projects, logs: logs});
+
+            });
 
     });
 
@@ -130,6 +136,21 @@ router.post('/save-project', passport.authenticate('jwt', {session:false}), (req
             return res.json({success:false, message: 'Could not save'});
         }
 
+    });
+
+});
+
+router.post('/save-log', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+    const log = new Logs(req.body.log);
+
+    log.save((err, log) => {
+
+        if(err) throw err;
+
+        console.log(log);
+
+        return res.json({success:true, log: log});
     });
 
 });

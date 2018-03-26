@@ -44,11 +44,10 @@ export class ModalComponent implements OnInit {
 
   }
 
-  saveProject() {
-
-    console.log(this.projectProps);
+  saveOperation() {
 
     this.modalDone.emit(this.projectProps);
+
   }
 
   isAddNewProject() {

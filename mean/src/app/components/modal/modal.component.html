@@ -34,11 +34,15 @@
 
                 </form>
 
+                <!-- Shows if adding log -->
+                <textarea class="form-control" rows="6" cols="70" [(ngModel)]="projectProps.log_text" v-if="isAddLog()"></textarea>
+
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary waves-light" aria-label="Close" (click)="closeModal()" mdbRippleRadius>Close</button>
                 <button type="submit" 
-                        (click)="saveProject()"
+                        (click)="saveOperation()"
                         class="btn btn-primary relative waves-light" 
                         mdbRippleRadius>Save changes</button>
             </div>
