@@ -20,39 +20,40 @@
     <div class="row" *ngFor="let project of projects; index as i;">                
       <!-- Collapse buttons -->
       <div class="col-md-12">
-        
-        <div class="col-md-8">
-          <button class="btn btn-primary" 
-             [attr.type]="'button'" 
-             [attr.data-toggle]="'collapse'"
-             [attr.data-target]="'#collapse' + i" 
-             [attr.aria-expanded]="'false'" 
-             [attr.aria-controls]="'collapse' + i">
+        <div class="row">
+          <div class="col-md-8">
+            <button class="btn btn-primary" 
+              [attr.type]="'button'" 
+              [attr.data-toggle]="'collapse'"
+              [attr.data-target]="'#collapse' + i" 
+              [attr.aria-expanded]="'false'" 
+              [attr.aria-controls]="'collapse' + i">
 
-            {{ project.title }}
+              {{ project.title }}
 
-            <div class="grey-text">
-              {{ project.description }}
-            </div>
+              <div class="grey-text">
+                {{ project.description }}
+              </div>
+              </button>
+            <br>
+          </div>
+
+          <div class="col-md-4">
+            <button class="btn btn-primary"  (click)="logFor(project)">
+              <i class="fa fa-plus"></i> &nbsp;LOG
             </button>
-          <br>
-        </div>
-
-        <div class="col-md-4">
-          <button class="btn btn-primary"  (click)="logFor(project)">
-            <i class="fa fa-plus"></i> &nbsp;LOG
-          </button>
-        </div>
+          </div>
+          </div>
       </div>
       <!-- / Collapse buttons -->
 
       <!-- Collapsible element -->
       <div class="col-md-12" *ngIf="logs.length > 0">
-        <div [attr.class]="'collapse'"
+        <div [attr.class]="'collapse show'"
             [attr.id]="'collapse' + i"
             *ngFor="let log of logs; index as j; trackBy: logTrackFunction;">
-            <div class="mt-3" 
-                  
+            <div class="mt-3 card card-body pointer" 
+                  (click)="viewLog(project, log)"
                   *ngIf="log.project_id == project._id">
               
               <div class="row">  

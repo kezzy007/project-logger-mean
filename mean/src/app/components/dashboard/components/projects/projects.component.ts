@@ -19,6 +19,8 @@ export class ProjectsComponent implements OnInit {
   logs;
   projectProps;
   currentProject;
+  currentViewingLog;
+  userRole;
   EVENTS = {
     ADD_PROJECT: 'add_project'
   };
@@ -30,6 +32,10 @@ export class ProjectsComponent implements OnInit {
     assignUsers: 'assignUsers',
     addUser: 'addUser',
     editUser: 'editUser',
+  };
+  USER_ROLES = {
+    ADMIN: 'admin',
+    USER: 'user'
   };
 
   showModal = false;
@@ -44,8 +50,14 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit() {
 
+    this.setUserRole();
+
     this.getProjectsAndLogs();
 
+  }
+
+  setUserRole() {
+    this.userRole = JSON.parse(localStorage.getItem('user')).role;
   }
 
   getProjectsAndLogs() {
@@ -69,6 +81,7 @@ export class ProjectsComponent implements OnInit {
       title: '',
       description: '',
       log_text: '',
+      multi_props: null,
       op_type: null};
 
   }
@@ -100,7 +113,7 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  displayToast(message){
+  displayToast(message) {
 
 
 
@@ -165,6 +178,23 @@ export class ProjectsComponent implements OnInit {
 
   displayModal() {
     this.showModal = true;
+  }
+
+  viewLog(project, log) {
+
+      // Save log being currently viewed
+      this.currentViewingLog = {'project': project,
+                                'log': log,
+                                'userRole': this.userRole,
+                                'logEditingDisabled': this.userRole.toLowerCase() === this.USER_ROLES.ADMIN };
+
+      this.projectProps.multi_props = this.currentViewingLog;
+
+      this.projectProps.op_type = this.allOpTypes.viewLog;
+
+      // Send the log to modal
+      this.displayModal();
+
   }
 
   showBsCollapse() {}
