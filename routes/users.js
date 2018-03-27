@@ -155,4 +155,28 @@ router.post('/save-log', passport.authenticate('jwt', {session: false}), (req, r
 
 });
 
+router.post('/delete-log', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+    Logs.deleteLog(req.body.logId, (err, log) => {
+
+        if(err) throw err;
+
+        return res.json({success: true, log:log});
+
+    });
+
+});
+
+router.post('/save-admin-log-review', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+    Logs.saveAdminLogReview(req.body.log, (err, log) => {
+
+        if(err) throw err;
+
+        return res.json({success: true, log: log});
+
+    });
+
+});
+
 module.exports = router;

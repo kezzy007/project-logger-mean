@@ -66,24 +66,25 @@
                         class="btn btn-primary relative waves-light" 
                         mdbRippleRadius>Save changes</button>
                 
-                <button type="button" class="btn btn-success" v-if="isViewLog() && isAdmin()" @click="markLogAs('Seen')">
+                <button type="button" class="btn btn-success" *ngIf="isViewLog() && isAdmin()" (click)="saveOperation('seen')">
                     <i class="fa fa-check mr-2" aria-hidden="true"></i>
                     Seen
                 </button>
 
-                <button type="button" class="btn btn-warning" v-if="isViewLog() && isAdmin()" @click="markLogAs('Review')">
+                <button type="button" class="btn btn-warning" *ngIf="isViewLog() && isAdmin()" (click)="saveOperation('review')">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     Review
                 </button>
 
                 <!-- Displays button if user is viewing log provides button to edit-->
-                <button type="button" class="btn btn-primary" v-if="isViewLog() && !isAdmin()" @click="logEditingDisabled = !logEditingDisabled">
-                    <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                <button type="button" class="btn btn-primary" *ngIf="isViewLog() && !isAdmin()" 
+                        (click)="projectProps.multi_props.logEditingDisabled = projectProps.multi_props.logEditingDisabled">
+                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
                     Edit                          
                 </button>
 
                 <!-- Displays button if user is editing log provides button to update log-->
-                <button type="button" class="btn btn-success" v-if="isViewLog() && !logEditingDisabled && !isAdmin()" @click="EventBus.$emit('updateLog', receivedParam)">
+                <button type="button" class="btn btn-success" *ngIf="isViewLog() && !logEditingDisabled && !isAdmin()" (click)="EventBus.$emit('updateLog', receivedParam)">
                     <i class="fa fa-check mr-2" aria-hidden="true"></i>
                     Save                            
                 </button>

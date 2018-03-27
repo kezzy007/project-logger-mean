@@ -32,9 +32,24 @@ export class ProjectsService {
                   .map((response) => response );
   }
 
-  saveLogForProject(log): Observable<any> {
+  saveLogForProject(log): Observable<any>{
 
     return this.http.post<any>(this.hostUrl + '/users/save-log', { 'log': log})
                 .map((response) => response );
   }
+
+  saveLogStatus(log): Observable<any>{
+
+    return this.http.post<any> (this.hostUrl + '/users/save-admin-log-review', {'log': log})
+                .map((response) => response);
+
+  }
+
+  deleteLog(log): Observable<any> {
+
+    return this.http.post(this.hostUrl + '/delete-log', log)
+              .map((response) =>  response);
+
+  }
+
 }

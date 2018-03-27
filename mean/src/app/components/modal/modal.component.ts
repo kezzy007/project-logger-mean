@@ -48,7 +48,14 @@ export class ModalComponent implements OnInit {
 
   }
 
-  saveOperation() {
+  saveOperation($receivedValue) {
+
+    if (this.op_type === this.allOpTypes.viewLog) {
+      console.log("received value", $receivedValue);
+      this.projectProps.multi_props.log_admin_response = $receivedValue;
+
+    }
+
 
     this.modalDone.emit(this.projectProps);
 

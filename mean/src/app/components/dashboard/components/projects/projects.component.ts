@@ -33,9 +33,29 @@ export class ProjectsComponent implements OnInit {
     addUser: 'addUser',
     editUser: 'editUser',
   };
+
   USER_ROLES = {
     ADMIN: 'admin',
     USER: 'user'
+  };
+
+  logStatuses = {
+    REVIEW: 'review',
+    PENDING: 'pending',
+    SEEN: 'seen'
+  };
+
+  TOAST_OPTIONS = {
+    SUCCESS: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'success',
+    },
+    FAILURE: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'error',
+    }
   };
 
   showModal = false;
@@ -70,7 +90,7 @@ export class ProjectsComponent implements OnInit {
               this.logs = response.logs;
 
         },
-        (error) => console.log(error.response));
+        (error) => console.log("error : " + error.response));
   }
 
   initializeInstanceVariables() {
@@ -99,6 +119,10 @@ export class ProjectsComponent implements OnInit {
         this.saveLogForProject($event);
         break;
 
+      case this.allOpTypes.viewLog:
+        this.markLogAs($event);
+        break;
+
       default:
       break;
     }
@@ -113,9 +137,33 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  displayToast(message) {
+  displayToast(message, options) {
 
+  }
 
+  markLogAs(adminResponse) {
+
+    const log = {
+                  'log_id': this.currentViewingLog.log._id, 
+                  'log_status': adminResponse.multi_props.log_admin_response 
+                };
+
+    this.projectsService.saveLogStatus(log)
+        .subscribe((response) => {
+          console.log(response);
+          if (response.success) {
+
+            this.currentViewingLog.log.log_status = response.log.log_status;
+
+            this.displayToast('Log marked as ' + log.log_status.toLowerCase(), this.TOAST_OPTIONS.SUCCESS);
+          } else {
+
+            this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
+
+          }
+
+        },
+        (error) => console.log(error));
 
   }
 
@@ -126,15 +174,15 @@ export class ProjectsComponent implements OnInit {
     this.projectsService.saveProject(project)
         .subscribe((response) => {
 
-          if(response.success) {
+          if (response.success) {
             this.projects.push(response['project']);
             console.log(response);
-            this.displayToast('Project created');
+            this.displayToast('Project created', this.TOAST_OPTIONS.SUCCESS );
 
             return;
           }
 
-          this.displayToast('Operation failed');
+          this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
 
         });
   }
@@ -144,7 +192,8 @@ export class ProjectsComponent implements OnInit {
     const logobject = {
       'project_id': this.currentProject._id,
       'user': this.getUser(),
-      'log_message': log.log_text
+      'log_message': log.log_text,
+      'log_status': this.logStatuses.PENDING
     };
 
     this.projectsService.saveLogForProject(logobject)
@@ -154,6 +203,33 @@ export class ProjectsComponent implements OnInit {
           this.logs.push(response.log);
 
         });
+  }
+
+  deleteLog($event, project, log) {
+
+    $event.stopPropagation();
+
+    this.projectsService.deleteLog({ 'logId': log.id })
+        .subscribe((response) => {
+
+          if (response.success) {
+
+            this.removeLogFromProject(log);
+
+            this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+
+        } else {
+            this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
+        }
+
+    });
+
+  }
+
+  removeLogFromProject(log) {
+
+    this.logs.splice(this.logs.indexOf(log), 1);
+
   }
 
   getUser() {
@@ -186,7 +262,8 @@ export class ProjectsComponent implements OnInit {
       this.currentViewingLog = {'project': project,
                                 'log': log,
                                 'userRole': this.userRole,
-                                'logEditingDisabled': this.userRole.toLowerCase() === this.USER_ROLES.ADMIN };
+                                'log_admin_response': null,
+                                'logEditingDisabled': this.isAdmin() };
 
       this.projectProps.multi_props = this.currentViewingLog;
 
@@ -197,11 +274,10 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  showBsCollapse() {}
+  isAdmin() {
 
-  shownBsCollapse() {}
+    return this.userRole.toLowerCase() === this.USER_ROLES.ADMIN;
 
-  hideBsCollapse() {}
+  }
 
-  hiddenBsCollapse() {}
 }
