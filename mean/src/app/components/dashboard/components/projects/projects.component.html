@@ -19,14 +19,31 @@
     <!-- Single project with logs -->
     <div class="row" *ngFor="let project of projectsAndLogs; index as i;">                
       <!-- Collapse buttons -->
-      <div>
-          <button class="btn btn-primary" type="button" data-toggle="collapse" [attr.data-target]="'#collapse' + i" aria-expanded="false" aria-controls="collapseExample">
+      <div class="col-md-12">
+        
+        <div class="col-md-8">
+          <a class="" 
+             [attr.href]="'#collapse' + i" 
+             role="button" 
+             data-toggle="collapse"
+             [attr.data-target]="'#collapse' + i" 
+             aria-expanded="false" 
+             [attr.aria-controls]="'collapse' + i">
+
             {{ project.title }}
-          </button>
+
+            <div class="grey-text">
+              {{ project.description }}
+            </div>
+            </a>
           <br>
-          <div class="grey-text">
-            {{ project.description }}
-          </div>
+        </div>
+
+        <div class="col-md-4">
+          <button class="btn btn-primary"  (click)="logFor(project)">
+            <i class="fa fa-plus"></i> &nbsp;LOG
+          </button>
+        </div>
       </div>
       <!-- / Collapse buttons -->
 
@@ -57,6 +74,6 @@
   <app-modal *ngIf="showModal"
               [projectProps]="projectProps"
               (modalClosed)="showModal = false"
-              (modalDone)="saveProject($event)"></app-modal>
+              (modalDone)="saveOperation($event)"></app-modal>
 
 </div>
