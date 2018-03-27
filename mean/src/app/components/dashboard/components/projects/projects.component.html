@@ -6,7 +6,7 @@
     </div>
 
     <div class="col-md-3 align-right">
-      <button class="btn btn-success" (click)="showModal = true">
+      <button class="btn btn-success" (click)="addNewProjectModal()">
         <i class="fa fa-plus" aria-hidden="true"></i> New project
       </button>
     </div>
@@ -14,61 +14,67 @@
   <!-- End title section -->
 
   <!-- Project body -->
-  <div class="card-body" *ngIf="projectsAndLogs.length > 0">
+  <div class="card-body" *ngIf="projects.length > 0">
     
     <!-- Single project with logs -->
-    <div class="row" *ngFor="let project of projectsAndLogs; index as i;">                
+    <div class="row" *ngFor="let project of projects; index as i;">                
       <!-- Collapse buttons -->
       <div class="col-md-12">
-        
-        <div class="col-md-8">
-          <a class="" 
-             [attr.href]="'#collapse' + i" 
-             role="button" 
-             data-toggle="collapse"
-             [attr.data-target]="'#collapse' + i" 
-             aria-expanded="false" 
-             [attr.aria-controls]="'collapse' + i">
+        <div class="row">
+          <div class="col-md-8">
+            <button class="btn btn-primary" 
+              [attr.type]="'button'" 
+              [attr.data-toggle]="'collapse'"
+              [attr.data-target]="'#collapse' + i" 
+              [attr.aria-expanded]="'false'" 
+              [attr.aria-controls]="'collapse' + i">
 
-            {{ project.title }}
+              {{ project.title }}
 
-            <div class="grey-text">
-              {{ project.description }}
-            </div>
-            </a>
-          <br>
-        </div>
+              <div class="grey-text">
+                {{ project.description }}
+              </div>
+              </button>
+            <br>
+          </div>
 
-        <div class="col-md-4">
-          <button class="btn btn-primary"  (click)="logFor(project)">
-            <i class="fa fa-plus"></i> &nbsp;LOG
-          </button>
-        </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary"  (click)="logFor(project)">
+              <i class="fa fa-plus"></i> &nbsp;LOG
+            </button>
+          </div>
+          </div>
       </div>
       <!-- / Collapse buttons -->
 
       <!-- Collapsible element -->
-      <div class="collapse" [attr.id]="'collapse' + i" *ngIf="project.logs?.length > 0">
-          <div class="mt-3" *ngFor="let log of project.logs">
-            
-            <div class="row">  
-              <div class="col-md-4">
-                {{ logs.log_message }} 
-              </div>
+      <div class="col-md-12" *ngIf="logs.length > 0">
+        <div [attr.class]="'collapse show'"
+            [attr.id]="'collapse' + i"
+            *ngFor="let log of logs; index as j; trackBy: logTrackFunction;">
+            <div class="mt-3 card card-body pointer" 
+                  (click)="viewLog(project, log)"
+                  *ngIf="log.project_id == project._id">
               
-              <div class="col-md-4">
-                by {{ log.user.name }} 
-                <span class="badge badge-pill red">{{ log.user.role }}</span>
+              <div class="row">  
+                <div class="col-md-4">
+                  {{ log.log_message }} 
+                </div>
+                
+                <div class="col-md-4">
+                  by {{ log.user.name }} 
+                  <span class="badge badge-pill red">{{ log.user.role }}</span>
+                </div>
               </div>
-            </div>
 
-          </div>
+            </div>
+        </div>
       </div>
       <!-- / Collapsible element -->
 
+      </div>
     </div>
-  <!-- End of project render -->
-  </div>
+
 
   <!-- Modal component -->
   <app-modal *ngIf="showModal"

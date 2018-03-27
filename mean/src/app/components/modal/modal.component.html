@@ -34,13 +34,60 @@
 
                 </form>
 
+                <!-- Shows if adding log -->
+                <textarea class="form-control" rows="6" cols="70" [(ngModel)]="projectProps.log_text" *ngIf="isAddLog()"></textarea>
+
+                <!-- Display the following body if viewing logs -->
+                <div class="card w-100" *ngIf="isViewLog()">
+                    <div class="card-body" style="overflow-y:scroll;">
+                        
+                        <!-- If Admin displays the log message -->
+                        <p class="card-text" *ngIf="isAdmin()">
+                            {{ projectProps.multi_props.log.log_message }}
+                        </p>
+
+                        <!-- If User ddisplays the log message in a textarea and allow for editing -->
+                        <textarea class="form-control" 
+                                    rows="6" 
+                                    cols="70" 
+                                    [(ngModel)]="projectProps.multi_props.log.log_message" 
+                                    *ngIf="!isAdmin()"
+                                    [disabled]="projectProps.multi_props.logEditingDisabled"></textarea>
+
+                        
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary waves-light" aria-label="Close" (click)="closeModal()" mdbRippleRadius>Close</button>
                 <button type="submit" 
-                        (click)="saveProject()"
+                        (click)="saveOperation()"
                         class="btn btn-primary relative waves-light" 
                         mdbRippleRadius>Save changes</button>
+                
+                <button type="button" class="btn btn-success" *ngIf="isViewLog() && isAdmin()" (click)="saveOperation('seen')">
+                    <i class="fa fa-check mr-2" aria-hidden="true"></i>
+                    Seen
+                </button>
+
+                <button type="button" class="btn btn-warning" *ngIf="isViewLog() && isAdmin()" (click)="saveOperation('review')">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    Review
+                </button>
+
+                <!-- Displays button if user is viewing log provides button to edit-->
+                <button type="button" class="btn btn-primary" *ngIf="isViewLog() && !isAdmin()" 
+                        (click)="projectProps.multi_props.logEditingDisabled = projectProps.multi_props.logEditingDisabled">
+                        <i class="fa fa-pencil mr-2" aria-hidden="true"></i>
+                    Edit                          
+                </button>
+
+                <!-- Displays button if user is editing log provides button to update log-->
+                <button type="button" class="btn btn-success" *ngIf="isViewLog() && !logEditingDisabled && !isAdmin()" (click)="EventBus.$emit('updateLog', receivedParam)">
+                    <i class="fa fa-check mr-2" aria-hidden="true"></i>
+                    Save                            
+                </button>
             </div>
         </div>
     </div>

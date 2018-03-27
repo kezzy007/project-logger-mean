@@ -7,8 +7,12 @@ const LogsSchema = mongoose.Schema({
         type:String,
         required: true
     },
-    "project":{
-        type:Object,
+    "project_id":{
+        type:String,
+        required:true
+    },
+    "log_status": {
+        type: String,
         required:true
     },
     "user":{
@@ -24,6 +28,18 @@ const Logs = module.exports = mongoose.model('Logs',LogsSchema);
 
 module.exports.getLogs = (callback) => {
 
-    Logs.find(callback);
+    Logs.find({}, callback);
+
+};
+
+module.exports.deleteLog = (logId, callback) => {
+
+    Logs.find({_id: logId}).remove(callback);
+
+};
+
+module.exports.saveAdminLogReview = (log, callback) => {
+
+    Logs.findOneAndUpdate({_id: log.log_id}, {log_status: log.log_status}, {upsert:true, new:true}, callback);
 
 };

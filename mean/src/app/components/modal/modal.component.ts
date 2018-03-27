@@ -22,6 +22,10 @@ export class ModalComponent implements OnInit {
     addUser: 'addUser',
     editUser: 'editUser',
   };
+  USER_ROLES = {
+    ADMIN: 'admin',
+    USER: 'user'
+  };
 
   constructor() { }
 
@@ -44,11 +48,23 @@ export class ModalComponent implements OnInit {
 
   }
 
-  saveProject() {
+  saveOperation($receivedValue) {
 
-    console.log(this.projectProps);
+    if (this.op_type === this.allOpTypes.viewLog) {
+      console.log("received value", $receivedValue);
+      this.projectProps.multi_props.log_admin_response = $receivedValue;
+
+    }
+
 
     this.modalDone.emit(this.projectProps);
+
+  }
+
+  isAdmin() {
+
+    return this.projectProps.multi_props.userRole.toLowerCase() === this.USER_ROLES.ADMIN;
+
   }
 
   isAddNewProject() {
