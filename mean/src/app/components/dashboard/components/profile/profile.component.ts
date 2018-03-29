@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ProfileService } from './services/profile.service';
+import { FormControlDirective } from '@angular/forms';
+import { Ng4FilesService, Ng4FilesConfig, Ng4FilesStatus, Ng4FilesSelected } from 'angular4-files-upload';
+
 
 @Component({
   selector: 'app-profile',
@@ -7,9 +11,109 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor() { }
+
+  passwordsMatch = true;
+  temp_confirm_password = '';
+  userRecord = null;
+  TOAST_OPTIONS = {
+    SUCCESS: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'success',
+    },
+    FAILURE: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'error',
+    }
+  };
+
+  private imageConfig: Ng4FilesConfig = {
+    acceptExtensions: ['png', 'jpg', 'jpeg'],
+    maxFilesCount: 1,
+    maxFileSize: 2048000
+  };
+
+  uploadProfilePicUrl = 'http://localhost:3200/users/update-profile-pic';
+
+
+  constructor(private profileService: ProfileService,  private ng4FilesService: Ng4FilesService) { }
 
   ngOnInit() {
+
+     this.InitializeFormFields();
+
+     this.ng4FilesService.addConfig(this.imageConfig);
+
   }
 
+  InitializeFormFields() {
+
+    const user = window.localStorage.getItem('user');
+
+    this.userRecord = JSON.parse(user);
+
+  }
+
+  updateUserRecordInLocalStorage() {
+
+      window.localStorage.removeItem('user');
+
+      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+  }
+
+  updateUsersProfile() {
+
+      this.profileService.updateUsersProfile(this.userRecord)
+          .subscribe((response) => {
+
+                  // console.log(response);
+
+                  if (response.success) {
+
+                      this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+
+                      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+
+                  } else {
+
+                      this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
+                  }
+
+              });
+  }
+
+  onUpdateProfilePicture($event) {
+
+    console.log($event);
+    public filesSelect(selectedFiles: Ng4FilesSelected): void {
+        if (selectedFiles.status !== Ng4FilesStatus.STATUS_SUCCESS) {
+          this.selectedFiles = selectedFiles.status;
+          return;
+        }
+     
+        // Handle error statuses here
+     
+        this.selectedFiles = Array.from(selectedFiles.files).map(file => file.name);
+      } 
+
+
+  }
+
+  confirmPasswordsMatch() {
+
+      if (this.userRecord.temp_confirm_password !== '') {
+
+        return this.passwordsMatch = (this.userRecord.password === this.temp_confirm_password);
+
+      }
+
+      return this.passwordsMatch;
+
+  }
+
+  displayToast(message, options) {
+
+
+  }
 }

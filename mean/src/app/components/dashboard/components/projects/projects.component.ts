@@ -150,7 +150,7 @@ export class ProjectsComponent implements OnInit {
 
     this.projectsService.saveLogStatus(log)
         .subscribe((response) => {
-          console.log(response);
+
           if (response.success) {
 
             this.currentViewingLog.log.log_status = response.log.log_status;
@@ -176,7 +176,7 @@ export class ProjectsComponent implements OnInit {
 
           if (response.success) {
             this.projects.push(response['project']);
-            console.log(response);
+            // console.log(response);
             this.displayToast('Project created', this.TOAST_OPTIONS.SUCCESS );
 
             return;
@@ -199,7 +199,7 @@ export class ProjectsComponent implements OnInit {
     this.projectsService.saveLogForProject(logobject)
         .subscribe((response: Iresponse) => {
 
-          console.log(response);
+          // console.log(response);
           this.logs.push(response.log);
 
         });
@@ -209,7 +209,7 @@ export class ProjectsComponent implements OnInit {
 
     $event.stopPropagation();
 
-    this.projectsService.deleteLog({ 'logId': log.id })
+    this.projectsService.deleteLog({ 'logId': log._id })
         .subscribe((response) => {
 
           if (response.success) {
@@ -235,6 +235,14 @@ export class ProjectsComponent implements OnInit {
   getUser() {
 
     return JSON.parse(localStorage.getItem('user'));
+
+  }
+
+  getDatePublished(log){
+
+    var date = log.createdAt.replace('T', ' ');
+
+    return date;
 
   }
 

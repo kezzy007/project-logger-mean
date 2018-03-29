@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+
 
 // Models
 const User = require('../models/user');
@@ -176,6 +178,70 @@ router.post('/save-admin-log-review', passport.authenticate('jwt', {session: fal
         return res.json({success: true, log: log});
 
     });
+
+});
+
+router.post('/update-profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    const user = req.body.user;
+
+    User.getUserById(user._id, (err, userObj) => {
+
+        if(err) throw err;
+
+        if(userObj){
+
+            // Encrypt the new password;
+            if(user.password){
+
+                bcrypt.genSalt(10, (err, salt) => {
+                
+                    bcrypt.hash(user.password, salt, (err, hash) => {
+
+                        userObj.password = hash;
+
+                    })
+
+                });
+                
+            }
+            
+            userObj.name = user.name;
+            userObj.email = user.email;
+
+
+            User.updateRecord(userObj,(err, updateStatus)=>{
+
+                if (err) throw err;
+
+                if(updateStatus)
+                return res.json({success: true, message:'Record updated'});
+
+                return res.json({success: false, message:'Record update failed'});
+
+            });
+        }
+        else {
+            return res.json({success: false, message:'User record not found'});
+        }
+        
+
+    });
+
+});
+
+router.post('/update-profile-pic', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+    if(req.files) {
+
+        const rand = (Math.random() * 10) + (Math.random() * 10);
+
+        return res.json(req.files);
+
+    }
+    else{
+
+    }
 
 });
 
