@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
         type: 'error',
     }
   };
-
+  selectedFiles;
   private imageConfig: Ng4FilesConfig = {
     acceptExtensions: ['png', 'jpg', 'jpeg'],
     maxFilesCount: 1,
@@ -83,21 +83,21 @@ export class ProfileComponent implements OnInit {
               });
   }
 
-  onUpdateProfilePicture($event) {
 
-    console.log($event);
-    public filesSelect(selectedFiles: Ng4FilesSelected): void {
-        if (selectedFiles.status !== Ng4FilesStatus.STATUS_SUCCESS) {
-          this.selectedFiles = selectedFiles.status;
-          return;
-        }
-     
+  filesSelect(selectedFiles: Ng4FilesSelected): void {
+    if (selectedFiles.status !== Ng4FilesStatus.STATUS_SUCCESS) {
+        this.selectedFiles = selectedFiles.status;
+        return;
+    }
+
         // Handle error statuses here
-     
+
+    if (selectedFiles.files.length !== Ng4FilesStatus.STATUS_MAX_FILES_COUNT_EXCEED) {
+        console.log("You selected more than one image");
+        this.selectedFiles = selectedFiles.status;
+        return;
+    }
         this.selectedFiles = Array.from(selectedFiles.files).map(file => file.name);
-      } 
-
-
   }
 
   confirmPasswordsMatch() {

@@ -18,11 +18,9 @@
       <!-- Profile Pic upload -->
       <div class="md-form">
 
-            <ng4-files-drop (filesSelect)="filesSelect($event)">
-                <div style="display: inline-block; height: 100px; width: 100px; background-color: gray">
-                    {{selectedFiles}}
-                </div>
-            </ng4-files-drop>
+            <ng4-files-click (filesSelect)="filesSelect($event)" [configId]="imageConfig">
+                 <span>Upload</span>
+            </ng4-files-click>
 
       </div>
 
