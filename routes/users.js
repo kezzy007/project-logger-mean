@@ -234,13 +234,32 @@ router.post('/update-profile-pic', passport.authenticate('jwt', {session: false}
 
     if(req.files) {
 
-        const rand = (Math.random() * 10) + (Math.random() * 10);
+        const rand = Math.floor((Math.random() * 10)) + "_" + Math.floor((Math.random() * 10));
 
-        return res.json(req.files);
+        const profilePic = req.files.fileItem;
+
+        const profilePicName = rand + profilePic.name;
+
+        // return res.json(__dirname + '/../uploads/profile-pics/'+ profilePicName);
+        
+        profilePic.mv(__dirname + '/../uploads/profile-pics/'+ profilePicName, (err) => {
+
+            if(err){
+
+                return res.status(500).send({'success':false, 'message':err});
+
+            } 
+            else{
+
+                return res.json({ "success": true, "message": "Operation successful"});
+
+            }
+
+        });
 
     }
     else{
-
+        return res.json({"success":false, 'message':'No file found'});
     }
 
 });

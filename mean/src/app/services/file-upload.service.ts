@@ -14,17 +14,20 @@ export class FileUploadService {
 
   apiBaseURL = 'http://127.0.0.1:3200/';
 
+
     constructor(private http: HttpClient) { }
 
-    fileUpload(fileItem: File, relativeUrlPath: String, extraData?: object): any {
+    fileUpload(fileItem: File, relativeUrlPath?: String, extraData?: object): any {
 
       const apiCreateEndpoint = `${this.apiBaseURL + relativeUrlPath}`;
 
       const formData: FormData = new FormData();
 
       formData.append('fileItem', fileItem, fileItem.name);
-      if (extraData) {
 
+      console.log(fileItem);
+
+      if (extraData) {
 
         const keyArray = Object.keys(extraData);
 
@@ -41,7 +44,7 @@ export class FileUploadService {
         reportProgress: true // for progress data
       });
 
-      return this.http.request(req);
+      return this.http.request(req).map(response => response);
     }
 
   optionalFileUpload(fileItem?: File, extraData?: object): any {

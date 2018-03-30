@@ -17,7 +17,8 @@ import { MomentModule } from 'angular2-moment';
     exports: [
         MomentModule,
         ModalComponent,
-        MDBBootstrapModule
+        MDBBootstrapModule,
+        FormsModule
     ],
     declarations: [
         ModalComponent

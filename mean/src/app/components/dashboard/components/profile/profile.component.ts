@@ -36,10 +36,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     uploadingProgressing = false;
     fileUploadSub: any;
     serverResponse: any;
+    profilePicUploadUrl = 'users/update-profile-pic';
 
     @ViewChild('myInput')
     myFileInput: any;
-
 
 
   constructor(private profileService: ProfileService,
@@ -52,15 +52,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         /* initilize the form and/or extra form fields
             Do not initialize the file field
         */
-        this.fileDescription  = new FormControl('', [
-            Validators.required,
-            Validators.minLength(4),
-            Validators.maxLength(280)
-        ]);
+        // this.fileDescription  = new FormControl('', [
+        //     Validators.required,
+        //     Validators.minLength(4),
+        //     Validators.maxLength(280)
+        // ]);
 
-        this.statusCreateForm = new FormGroup({
-            'description': this.fileDescription,
-        });
+        // this.statusCreateForm = new FormGroup({
+        //     'description': this.fileDescription,
+        // });
 
     }
 
@@ -82,31 +82,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
           }
 
           if (event.type === HttpEventType.Response) {
-            // console.log(event.body);
+            console.log(event.body);
             this.uploadComplete = true;
             this.serverResponse = event.body;
           }
         }
-
-        handleSubmit(event: any, statusNgForm: NgForm, statusFormGroup: FormGroup) {
-
-          event.preventDefault();
-
-          if (statusNgForm.submitted) {
-
-              const submittedData = statusFormGroup.value;
-
-              this.fileUploadSub = this.fileUploadService.fileUpload(
-                    this.fileToUpload,
-                    submittedData).subscribe(
-                        (progressEvent: any) => this.handleProgress(progressEvent),
-                        (error) => {
-                            console.log('Server error');
-                        });
-
-              statusNgForm.resetForm({});
-          }
-    }
 
     handleFileInput(files: FileList) {
 
@@ -118,6 +98,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     }
 
+    /**
+     *  Method specifically used to handle file upload
+     */
+
+    handleFormSubmit (event: any, statusNgForm: NgForm) {
+        event.preventDefault();
+        if (statusNgForm.submitted) {
+
+            this.fileUploadSub = this.fileUploadService
+                                .fileUpload(this.fileToUpload, this.profilePicUploadUrl)
+                                .subscribe( (progressEvent) => this.handleProgress(progressEvent),
+                                            (error) => {
+                                                alert(error);
+                                                console.log('Server error' + error);
+                                            });
+
+            statusNgForm.resetForm({});
+        }
+    }
+
     resetFileInput() {
 
         console.log(this.myFileInput.nativeElement.files);
@@ -127,41 +127,41 @@ export class ProfileComponent implements OnInit, OnDestroy {
         console.log(this.myFileInput.nativeElement.files);
     }
 
-  InitializeFormFields() {
+    InitializeFormFields() {
 
-    const user = window.localStorage.getItem('user');
+        const user = window.localStorage.getItem('user');
 
-    this.userRecord = JSON.parse(user);
+        this.userRecord = JSON.parse(user);
 
-  }
+    }
 
-  updateUserRecordInLocalStorage() {
+    updateUserRecordInLocalStorage() {
 
-      window.localStorage.removeItem('user');
+        window.localStorage.removeItem('user');
 
-      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
-  }
+        window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+    }
 
-  updateUsersProfile() {
+    updateUsersProfile() {
 
-      this.profileService.updateUsersProfile(this.userRecord)
-          .subscribe((response) => {
+        this.profileService.updateUsersProfile(this.userRecord)
+            .subscribe((response) => {
 
-                  // console.log(response);
+                    // console.log(response);
 
-                  if (response.success) {
+                    if (response.success) {
 
-                      this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+                        this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
 
-                      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+                        window.localStorage.setItem('user', JSON.stringify(this.userRecord));
 
-                  } else {
+                    } else {
 
-                      this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
-                  }
+                        this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
+                    }
 
-              });
-  }
+                });
+    }
 
 
 

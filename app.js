@@ -6,6 +6,8 @@ const cors = require('cors');
 const passport = require('passport');
 const config = require('./config/database');
 const passportJwtConfig = require('./config/passport');
+const fileUpload = require('express-fileupload');
+
 
 
 // Connect to mongoose
@@ -22,6 +24,8 @@ mongoose.connection.on('error', (err) => { console.log('Errors encountered '+ er
 const app = express();
 const users = require('./routes/users');
 
+// Configure express file uploader
+app.use(fileUpload());
 
 // CORS Middleware
 app.use(cors());
