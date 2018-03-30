@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { ModalComponent } from './components/modal/modal.component';
 import { MomentModule } from 'angular2-moment';
-import { Ng4FilesModule } from 'angular4-files-upload';
 
 
 @NgModule({
@@ -13,13 +12,11 @@ import { Ng4FilesModule } from 'angular4-files-upload';
         CommonModule,
         FormsModule,
         MomentModule,
-        Ng4FilesModule,
         MDBBootstrapModule.forRoot()
     ],
     exports: [
         MomentModule,
         ModalComponent,
-        Ng4FilesModule,
         MDBBootstrapModule
     ],
     declarations: [

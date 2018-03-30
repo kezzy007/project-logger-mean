@@ -18,10 +18,36 @@
       <!-- Profile Pic upload -->
       <div class="md-form">
 
-            <ng4-files-click (filesSelect)="filesSelect($event)" [configId]="imageConfig">
-                 <span>Upload</span>
-            </ng4-files-click>
-
+        <div class="form-group">
+            <label for="file">Choose File</label>
+                <input #myInput type="file"
+                       id="file"
+                       (change)="handleFileInput($event.target.files)">
+        </div>
+    
+        <textarea id='fileDescription' name='fileDescription' formControlName='fileDescription'></textarea>
+    
+        <div *ngIf='fileDescription.invalid && (fileDescription.dirty || fileDescription.touched)'>
+            <div *ngIf='fileDescription.errors.required'>
+                Content is required.
+            </div>
+            <div *ngIf='fileDescription.errors.maxlength'>
+                Max length is 280
+            </div>
+            <div *ngIf='fileDescription.errors.minlength'>
+                Min length is 4
+            </div>
+        </div>
+    
+    
+        <button type='submit' class='btn btn-default' [disabled]='statusFormGroup.invalid'>Submit</button>
+        <button type='button' class='btn btn-default' (click)='statusNgForm.resetForm({})'>Reset</button>
+        
+        <div class="row">
+            <div style='width:50%;background-color:#007cae;'>
+                <span *ngIf='uploadProgress > 25'>{{ uploadProgress }}%</span>
+            </div>
+        </div>
       </div>
 
       <!-- New password -->
