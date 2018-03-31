@@ -1,3 +1,64 @@
-<p>
-  profile works!
-</p>
+<div class="pt-5">
+
+  <form method="POST" *ngIf="userRecord != null" id="profile-form"  enctype="multipart/form-data">
+      <p class="h4 text-center mb-4">My Profile</p>
+
+      <!-- Input name -->
+      <div class="md-form">
+          <i class="fa fa-id-card prefix grey-text"></i>
+          <input type="text" id="fullName" class="form-control" name="name" [(ngModel)]="userRecord.name">
+          <label for="fullName" [ngClass]="{ 'active': (userRecord.name != null) }">Your full name</label>
+      </div>
+
+      <!-- Display current profile pic -->
+      <!-- <div class="md-form">
+          <img :src="userRecord.profile_pic" alt="placeholder" class="img-thumbnail h-50">
+      </div> -->
+
+      <!-- Profile Pic upload -->
+      <div class="md-form">
+
+            <ng4-files-click (filesSelect)="filesSelect($event)" [configId]="imageConfig">
+                 <span>Upload</span>
+            </ng4-files-click>
+
+      </div>
+
+      <!-- New password -->
+      <div class="md-form">
+         <i class="fa fa-lock prefix grey-text"></i>
+         <input type="text" id="password" class="form-control" name="password"
+                  (keyup)="confirmPasswordsMatch()" [(ngModel)]="userRecord.password">
+         <label for="password">Password</label>
+      </div>
+
+      <!-- Confirm password -->
+      <div class="md-form">
+         <i class="fa fa-lock prefix grey-text"></i>
+         <input type="text" id="confirm-password" class="form-control" name="confirm_password"
+                  (keyup)="confirmPasswordsMatch()" [(ngModel)]="temp_confirm_password">
+         <label for="confirm-
+         password">Confirm Password</label>
+      </div>
+
+      <div class="md-form" *ngIf="!passwordsMatch">
+          <span class="alert alert-danger">Passwords do not match</span>
+      </div>
+
+      <!-- Email -->
+      <div class="md-form">
+         <i class="fa fa-envelope prefix grey-text"></i>
+         <input type="text" id="email" class="form-control" name="email" [(ngModel)]="userRecord.email">
+         <label [ngClass]="{ 'active' : (userRecord.email != null)}" for="email">Email</label>
+      </div>
+
+      <!-- Update button -->
+      <div class="text-center mt-4">
+          <button class="btn btn-default" type="button" (click)="updateUsersProfile()">
+            <i class="fa fa-edit prefix grey-text"></i>&nbsp;  Update Profile
+          </button>
+      </div>
+
+  </form>
+
+</div>

@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from './shared.module';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { DashboardModule } from './components/dashboard/dashboard.module';
+import { MomentModule } from 'angular2-moment';
 
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
@@ -39,6 +40,7 @@ const routes: Routes = [
     MDBBootstrapModule.forRoot(),
     SharedModule,
     DashboardModule,
+    MomentModule,
     RouterModule.forRoot(routes)
   ],
   providers: [

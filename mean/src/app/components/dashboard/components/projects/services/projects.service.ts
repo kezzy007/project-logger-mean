@@ -47,7 +47,7 @@ export class ProjectsService {
 
   deleteLog(log): Observable<any> {
 
-    return this.http.post(this.hostUrl + '/delete-log', log)
+    return this.http.post(this.hostUrl + '/users/delete-log', log)
               .map((response) =>  response);
 
   }

@@ -51,6 +51,7 @@
       <div class="col-md-12" *ngIf="logs.length > 0">
         <div [attr.class]="'collapse show'"
             [attr.id]="'collapse' + i"
+            [attr.aria-labelledby]="'collapse' + i"
             *ngFor="let log of logs; index as j; trackBy: logTrackFunction;">
             <div class="mt-3 card card-body pointer" 
                   (click)="viewLog(project, log)"
@@ -65,8 +66,39 @@
                   by {{ log.user.name }} 
                   <span class="badge badge-pill red">{{ log.user.role }}</span>
                 </div>
+
+                <div class="col-md-4">
+                  <!-- Displays the time log was published from now -->
+                  <small> {{ getDatePublished(log) | amTimeAgo:true }}</small> 
+
+                  <!-- This displays an icon to mark the status of the project -->
+                  <h6 class="badge badge-pill green" *ngIf="logStatuses.SEEN == log.log_status">
+                      <i class="fa fa-check mr-1 text-white" aria-hidden="true"></i>
+                      {{ logStatuses.SEEN }}
+                  </h6>
+
+                  <!-- This displays an icon to indicate the log needs to be reviewed by the user-->
+                  <h6 class="badge badge-pill red" *ngIf="logStatuses.REVIEW == log.log_status">
+                      <i class="fa fa-edit mr-1 text-white" aria-hidden="true"></i>
+                      {{ logStatuses.REVIEW }}
+                  </h6>
+
+                  <!-- This displays an icon to indicate the log is pending and needs approval by admin -->
+                  <h6 class="badge badge-pill warning-color" *ngIf="logStatuses.PENDING == log.log_status">
+                      <i class="fa fa-thumb-tack mr-1 text-white" aria-hidden="true"></i>
+                      {{ logStatuses.PENDING }}
+                  </h6>
+                  
+                  <!-- Button to delete log-->
+                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteLog($event, project, log)">
+                      <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                      Delete                            
+                  </button>
+    
+                </div>
               </div>
 
+              
             </div>
         </div>
       </div>
