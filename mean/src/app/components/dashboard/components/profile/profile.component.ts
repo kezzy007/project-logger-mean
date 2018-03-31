@@ -92,7 +92,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         const fileItem = files.item(0);
 
-        console.log('file input has changed. The file is', fileItem);
+        // console.log('file input has changed. The file is', fileItem);
 
         this.fileToUpload = fileItem;
 
@@ -105,6 +105,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     handleFormSubmit (event: any, statusNgForm: NgForm) {
         event.preventDefault();
         if (statusNgForm.submitted) {
+
+            // Check if file has been selected
+            if (!this.fileToUpload){
+                // A message will be displayed by the
+                return;
+            }
 
             this.fileUploadSub = this.fileUploadService
                                 .fileUpload(this.fileToUpload, this.profilePicUploadUrl)

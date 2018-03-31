@@ -21,13 +21,15 @@
                             <!-- Profile Pic upload -->
                             <div class="md-form">
                 
-                                    <div class="form-group">
-                                            <label for="file">Choose File</label>
-                                                <input #myInput 
-                                                       type="file"
-                                                       id="file"
-                                                       (change)="handleFileInput($event.target.files)">
-                                    </div>
+                                            <i class="fa fa-user prefix grey-text"></i>
+                                            
+                                            <input #myInput 
+                                                    type="file"
+                                                    id="file"
+                                                    class="form-control"
+                                                    (change)="handleFileInput($event.target.files)">
+
+                                            <label for="file" class="active">Select picture</label>
                                     
                                         <!-- <textarea id='fileDescription' name='fileDescription' formControlName='fileDescription'></textarea>
                                     
@@ -43,14 +45,22 @@
                                             </div>
                                         </div> -->
                                     
-                                    
-                                        <button type='submit' class='btn btn-info' [disabled]='myInput.invalid'>Upload</button>
-                                        <button type='button' class='btn btn-info' (click)='statusNgForm.resetForm({})'>Reset</button>
                                         
                                     <div class="row">
-                                        <div style='width:50%;background-color:#007cae;'>
-                                            <span *ngIf='uploadProgress > 25'>{{ uploadProgress }}%</span>
+                                        <div class="col-md-7">    
+                                            <button type='submit' class='btn btn-info' [disabled]='myInput.invalid'>Upload</button>
+                                            <button type='button' class='btn btn-info' (click)='statusNgForm.resetForm({})'>Reset</button>
                                         </div>
+
+                                        <div class="col-md-5" *ngIf="!fileToUpload">
+                                            <div class="alert alert-danger">You haven't selected any file</div>
+                                        </div>
+                                        <div class="col-md-12" *ngIf='uploadProgress > 25'>
+                                            <div class="px-4 py-2 warning-color-dark">
+                                                <span *ngIf='uploadProgress > 25' class="text-white">{{ uploadProgress }}%</span>
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                             </div>
                 
