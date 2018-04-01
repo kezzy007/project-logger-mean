@@ -20,15 +20,35 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    profile_pic: {
+        type: String,
+        required: false
+    },
+    skill: {
+        type: String,
+        required: true
+    }
 });
 
 const User = module.exports = mongoose.model('User',userSchema);
 
 module.exports.updateRecord = (userObj, callback) => {
 
-    User.findOneAndUpdate({_id:userObj._id}, userObj, callback);
+    User.findOneAndUpdate({_id:userObj._id}, 
+                            userObj, 
+                            {
+                                projection: {name:1, email:1, role:1, profile_pic:1, skill:1},
+                                new: true
+                            }, 
+                             callback);
 
 };
+
+module.exports.updateProfilePicPath = (user_id, pic_name, callback) => {
+
+    User.findOneAndUpdate({_id: user_id}, {profile_pic: pic_name}, {upsert: true, new: true}, callback);
+
+}
 
 module.exports.getUserById = function(id, callback){
     User.findById(id, callback);
@@ -69,5 +89,11 @@ module.exports.addUser = function(newUser, callback){
         });
 
     });
+
+};
+
+module.exports.deleteUser = (user_id, callback) => {
+    
+    User.deleteOne({_id: user_id}, callback);
 
 };

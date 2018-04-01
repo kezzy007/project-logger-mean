@@ -4,10 +4,16 @@
 <div class="col-md-3">
     <aside class="unique-color-dark">
 
+    <!-- The profile picture is displayed here -->
+    <!--Avatar-->
+    <div class="avatar mx-auto white">
+        <img src="{{ userAvatar }}" alt="avatar mx-auto white" class="rounded-circle img-fluid">
+    </div>
+
     <ul class="list-group">
-    <li class="list-group-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['projects']">Projects</a></li>
-    <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['profile']">Profile</a></li>
-    <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['users']">Users</a></li>
+        <li class="list-group-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['projects']">Projects</a></li>
+        <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['profile']">Profile</a></li>
+        <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['users']">Users</a></li>
     </ul>
     </aside>
 </div>

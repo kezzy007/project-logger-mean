@@ -1,14 +1,14 @@
 
 
-<div mdbModal #basicModal="mdb-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myBasicModalLabel" aria-hidden="true" [config]="{backdrop: false, ignoreBackdropClick: true, show: true}">
+<div mdbModal #basicModal="mdb-modal" style="overflow:scroll;" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myBasicModalLabel" aria-hidden="true" [config]="{backdrop: false, ignoreBackdropClick: true, show: true}">
     
-    <div class="modal-dialog w-50" role="document">
+    <div class="modal-dialog w-50 modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
                     <span aria-hidden="true">×</span>
                 </button>
-                <h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
+                <!-- <h4 class="modal-title w-100" id="myModalLabel"></h4> -->
             </div>
             <div class="modal-body">
 
@@ -33,9 +33,11 @@
                     </div>
 
                 </form>
+                <!-- End adding projects body -->
 
                 <!-- Shows if adding log -->
                 <textarea class="form-control" rows="6" cols="70" [(ngModel)]="projectProps.log_text" *ngIf="isAddLog()"></textarea>
+                <!-- End adding logs body -->
 
                 <!-- Display the following body if viewing logs -->
                 <div class="card w-100" *ngIf="isViewLog()">
@@ -57,12 +59,112 @@
                         
                     </div>
                 </div>
+                <!-- End viewing logs body -->
+
+                <!-- Displays the form below if adding new users -->
+                <div *ngIf="isAddUser() || isEditUser()">
+
+                    <form>
+                        <p class="h4 text-center mb-4">User Details</p>
+
+                        <!-- Input name -->
+                        <div class="md-form">
+                            <i class="fa fa-id-card prefix grey-text"></i>
+                            <input type="text" id="fullName" class="form-control" name="name" [(ngModel)]="userProps.props.name">
+                            <label for="fullName" [ngClass]="{ active: (userProps.props.name != null) }">Full name</label>
+                        </div>
+
+                        <!-- New password -->
+                        <div class="md-form">
+                            <i class="fa fa-lock prefix grey-text"></i>
+                            
+                            <input type="password" id="password" 
+                                    name="password"
+                                    class="form-control col-md-11"
+                                     (keyup)="confirmPasswordsMatch()"
+                                     [(ngModel)]="userProps.props.password">
+                            
+                            <i class="fa fa-eye grey-text" 
+                                style="position: absolute; top:.25rem; font-size: 1.75rem; right: 0;"
+                                (click)="togglePasswordVisibility($event,'password')"></i>
+                            
+                            <label for="password">Password</label>
+                        </div>
+
+                        <!-- Confirm password -->
+                        <div class="md-form">
+                            <i class="fa fa-lock prefix grey-text"></i>
+                            
+                            <input type="password" id="confirm-password" class="form-control"
+                                        name="confirm-password" 
+                                        (keyup)="confirmPasswordsMatch()" 
+                                        [(ngModel)]="userProps.tempPasswordConfirm"
+                                        #password>
+                            
+                            <i class="fa fa-eye grey-text"
+                                style="position: absolute; top:.25rem; font-size: 1.75rem; right: 0;"
+                                (click)="togglePasswordVisibility($event, 'confirm-password')"></i>
+                            
+                            <label for="confirm-password">Confirm Password</label>
+                        </div>
+
+                        <div class="md-form" *ngIf="!passwordsMatch">
+                            <span class="alert alert-sm alert-danger ml-5">Passwords do not match</span>
+                        </div>
+
+                        <!-- Displays the buttons to select user role -->
+                        <div class="row pl-3 pt-2 mt-2" style="flex-direction: column;">
+                            <h4 class="pb-2 grey-text">
+                            <i class="fa fa-group prefix grey-text"></i>&nbsp;&nbsp;  Role 
+                            </h4>
+
+                            <div class="form-check mb-4 pl-5">
+                                <input class="" type="radio" name="roleRadio" 
+                                        id="userRadio" value="option1" 
+                                        [checked]="userProps.props.role == USER_ROLES.USER" 
+                                        (change)="updateUserRole($event, 'user')">
+
+                                <label class="form-check-label" style="position:inherit" for="userRadio">
+                                    User
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-4 pl-5">
+                                <input class="" type="radio" name="roleRadio" 
+                                id="adminRadio" value="option2"
+                                [checked]="userProps.props.role == USER_ROLES.ADMIN" 
+                                (change)="updateUserRole($event, 'admin')">
+
+                                <label class="form-check-label" style="position:inherit" for="adminRadio">
+                                    Admin
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- User's Skill -->
+                        <div class="md-form">
+                            <i class="fa fa-lock prefix grey-text"></i>
+                            <input type="text" id="skill" class="form-control" name="skill" [(ngModel)]="userProps.props.skill">
+                            <label [ngClass]="{ active : (userProps.props.skill != null)}" for="password">Skill</label>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="md-form">
+                            <i class="fa fa-envelope prefix grey-text"></i>
+                            <input type="email" id="email" name="email" class="form-control" [(ngModel)]="userProps.props.email">
+                            <label [ngClass]="{ active : (userProps.props.email != null)}" for="email">Email</label>
+                        </div>
+
+                    </form>
+
+                </div>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary waves-light" aria-label="Close" (click)="closeModal()" mdbRippleRadius>Close</button>
                 <button type="submit" 
                         (click)="saveOperation()"
+                        *ngIf="!isViewLog()"
                         class="btn btn-primary relative waves-light" 
                         mdbRippleRadius>Save changes</button>
                 
@@ -88,6 +190,17 @@
                     <i class="fa fa-check mr-2" aria-hidden="true"></i>
                     Save                            
                 </button>
+
+                <!-- Displays button if updating user's record -->
+                <button class="btn btn-success" *ngIf="isEditUser()" type="button" (click)="saveOperation()">
+                    <i class="fa fa-edit prefix"></i>&nbsp;  Update Profile
+                </button>
+
+                <!-- Displays button if creating a new user -->
+                <button class="btn btn-success" *ngIf="isAddUser()" type="button" (click)="saveOperation()">
+                    <i class="fa fa-plus prefix"></i>&nbsp;   Register User
+                </button>
+
             </div>
         </div>
     </div>

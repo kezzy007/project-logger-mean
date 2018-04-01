@@ -1,104 +1,175 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ProfileService } from './services/profile.service';
-import { FormControlDirective } from '@angular/forms';
-import { Ng4FilesService, Ng4FilesConfig, Ng4FilesStatus, Ng4FilesSelected } from 'angular4-files-upload';
+import { HttpClient, HttpHeaders, HttpEventType, HttpRequest, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 
+import { FormControl, FormGroup, Validators, NgForm } from '@angular/forms';
+import { FileUploadService } from '../../../../services/file-upload.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
 
-  passwordsMatch = true;
-  temp_confirm_password = '';
-  userRecord = null;
-  TOAST_OPTIONS = {
-    SUCCESS: {
-        text: 'CLOSE',
-        duration: 5000,
-        type: 'success',
-    },
-    FAILURE: {
-        text: 'CLOSE',
-        duration: 5000,
-        type: 'error',
-    }
-  };
-  selectedFiles;
-  private imageConfig: Ng4FilesConfig = {
-    acceptExtensions: ['png', 'jpg', 'jpeg'],
-    maxFilesCount: 1,
-    maxFileSize: 2048000
-  };
+    passwordsMatch = true;
+    temp_confirm_password = '';
+    userRecord = null;
+    TOAST_OPTIONS = {
+        SUCCESS: {
+            text: 'CLOSE',
+            duration: 5000,
+            type: 'success',
+        },
+        FAILURE: {
+            text: 'CLOSE',
+            duration: 5000,
+            type: 'error',
+        }
+    };
+    statusCreateForm: FormGroup;
+    fileDescription: FormControl;
+    fileToUpload: File  = null;
+    uploadProgress = 0;
+    uploadComplete = false;
+    uploadingProgressing = false;
+    fileUploadSub: any;
+    serverResponse: any;
+    profilePicUploadUrl = 'users/update-profile-pic';
 
-  uploadProfilePicUrl = 'http://localhost:3200/users/update-profile-pic';
-
-
-  constructor(private profileService: ProfileService,  private ng4FilesService: Ng4FilesService) { }
-
-  ngOnInit() {
-
-     this.InitializeFormFields();
-
-     this.ng4FilesService.addConfig(this.imageConfig);
-
-  }
-
-  InitializeFormFields() {
-
-    const user = window.localStorage.getItem('user');
-
-    this.userRecord = JSON.parse(user);
-
-  }
-
-  updateUserRecordInLocalStorage() {
-
-      window.localStorage.removeItem('user');
-
-      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
-  }
-
-  updateUsersProfile() {
-
-      this.profileService.updateUsersProfile(this.userRecord)
-          .subscribe((response) => {
-
-                  // console.log(response);
-
-                  if (response.success) {
-
-                      this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
-
-                      window.localStorage.setItem('user', JSON.stringify(this.userRecord));
-
-                  } else {
-
-                      this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
-                  }
-
-              });
-  }
+    @ViewChild('myInput')
+    myFileInput: any;
 
 
-  filesSelect(selectedFiles: Ng4FilesSelected): void {
-    if (selectedFiles.status !== Ng4FilesStatus.STATUS_SUCCESS) {
-        this.selectedFiles = selectedFiles.status;
-        return;
+  constructor(private profileService: ProfileService,
+              private fileUploadService: FileUploadService) { }
+
+    ngOnInit() {
+
+         this.InitializeFormFields();
+
+        /* initilize the form and/or extra form fields
+            Do not initialize the file field
+        */
+        // this.fileDescription  = new FormControl('', [
+        //     Validators.required,
+        //     Validators.minLength(4),
+        //     Validators.maxLength(280)
+        // ]);
+
+        // this.statusCreateForm = new FormGroup({
+        //     'description': this.fileDescription,
+        // });
+
     }
 
-        // Handle error statuses here
-
-    if (selectedFiles.files.length !== Ng4FilesStatus.STATUS_MAX_FILES_COUNT_EXCEED) {
-        console.log("You selected more than one image");
-        this.selectedFiles = selectedFiles.status;
-        return;
+    ngOnDestroy() {
+        if (this.fileUploadSub) {
+            this.fileUploadSub.unsubscribe();
+            }
     }
-        this.selectedFiles = Array.from(selectedFiles.files).map(file => file.name);
-  }
+
+    handleProgress(event) {
+        if (event.type === HttpEventType.DownloadProgress) {
+            this.uploadingProgressing = true;
+            this.uploadProgress = Math.round(100 * event.loaded / event.total)
+          }
+
+          if (event.type === HttpEventType.UploadProgress) {
+            this.uploadingProgressing = true;
+            this.uploadProgress = Math.round(100 * event.loaded / event.total)
+          }
+
+          if (event.type === HttpEventType.Response) {
+            console.log(event.body);
+            this.uploadComplete = true;
+            this.serverResponse = event.body;
+          }
+        }
+
+    handleFileInput(files: FileList) {
+
+        const fileItem = files.item(0);
+
+        // console.log('file input has changed. The file is', fileItem);
+
+        this.fileToUpload = fileItem;
+
+    }
+
+    /**
+     *  Method specifically used to handle file upload
+     */
+
+    handleFormSubmit (event: any, statusNgForm: NgForm) {
+        event.preventDefault();
+        if (statusNgForm.submitted) {
+
+            // Check if file has been selected
+            if (!this.fileToUpload){
+                // A message will be displayed by the
+                return;
+            }
+
+            this.fileUploadSub = this.fileUploadService
+                                .fileUpload(this.fileToUpload, this.profilePicUploadUrl, this.userRecord)
+                                .subscribe( (progressEvent) => this.handleProgress(progressEvent),
+                                            (error) => {
+                                                alert(error);
+                                                console.log('Server error' + error);
+                                            });
+
+            statusNgForm.resetForm({});
+        }
+    }
+
+    resetFileInput() {
+
+        console.log(this.myFileInput.nativeElement.files);
+
+        this.myFileInput.nativeElement.value = '';
+
+        console.log(this.myFileInput.nativeElement.files);
+    }
+
+    InitializeFormFields() {
+
+        const user = window.localStorage.getItem('user');
+
+        this.userRecord = JSON.parse(user);
+
+    }
+
+    updateUserRecordInLocalStorage() {
+
+        window.localStorage.removeItem('user');
+
+        window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+    }
+
+    updateUsersProfile() {
+
+        this.profileService.updateUsersProfile(this.userRecord)
+            .subscribe((response) => {
+
+                    // console.log(response);
+
+                    if (response.success) {
+
+                        this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+
+                        window.localStorage.setItem('user', JSON.stringify(this.userRecord));
+
+                    } else {
+
+                        this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
+                    }
+
+                });
+    }
+
+
 
   confirmPasswordsMatch() {
 

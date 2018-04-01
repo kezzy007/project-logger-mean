@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserAvatarService } from '../../services/user-avatar';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
+  userAvatar;
+
   constructor() { }
 
   ngOnInit() {
+
+    this.getAndSubscribeToUserAvatarOnChange();
+
+  }
+
+  getAndSubscribeToUserAvatarOnChange(){
+
+
+
   }
 
 }

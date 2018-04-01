@@ -1,3 +1,62 @@
-<p>
-  users works!
-</p>
+<div class="pt-3">
+  <!-- Display add user button if admin -->
+  <div class="pull-right" *ngIf="isAdmin()">
+      <button class="btn btn-info" (click)="displayAddUserForm()">
+          <i class="fa fa-plus" aria-hidden="true"></i> &nbsp;
+          Add User
+      </button>
+  </div>
+
+  <table class="table">
+
+      <!--Table head-->
+      <thead class="mdb-color darken-3">
+          <tr class="text-white">
+              <th>#</th>
+              <th>Name</th>
+              <th>Skill</th>
+              <th>Role</th>
+              <th rowspan="2">Action</th>
+          </tr>
+      </thead>
+      <!--Table head-->
+
+      <!--Table body-->
+      <tbody *ngIf="allUsers">
+          <tr *ngFor="let user of allUsers; index as i; trackBy:userTrackByFunction">
+              <th scope="row">{{ i + 1 }}</th>
+              <td> {{ user.name }} </td>
+              <td> {{ user.skill }} </td>
+              <td> {{ user.role }} </td>
+              <!-- Here -->
+              <td class="p-0"> 
+                  <div class="row">
+                      <!-- Edit user -->
+                      <div class="text-center">
+                          <button class="btn btn-default" type="button" (click)="editUser(user)">
+                          <i class="fa fa-edit prefix  text-white"></i>&nbsp;  Edit
+                          </button>
+                      </div>
+
+                      <!-- Delete user -->
+                      <div class="text-center">
+                          <button class="btn btn-danger" type="button" (click)="deleteUser(user)">
+                          <i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp; Delete
+                          </button>
+                      </div>
+                  </div>
+              </td>
+      
+          </tr>
+      </tbody>
+      <!--Table body-->
+
+  </table>
+
+</div>
+
+<!-- Modal component -->
+<app-modal *ngIf="showModal"
+[userProps]="userProps"
+(modalClosed)="showModal = false"
+(modalDone)="saveOperation($event)"></app-modal>

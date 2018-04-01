@@ -18,6 +18,7 @@ export class ProjectsComponent implements OnInit {
   projects;
   logs;
   projectProps;
+  userProps;
   currentProject;
   currentViewingLog;
   userRole;
@@ -30,8 +31,6 @@ export class ProjectsComponent implements OnInit {
     addProject: 'addProject',
     viewLog: 'viewLog',
     assignUsers: 'assignUsers',
-    addUser: 'addUser',
-    editUser: 'editUser',
   };
 
   USER_ROLES = {

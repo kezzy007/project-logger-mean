@@ -13,18 +13,18 @@
     "body-parser": "*",
     "cors": "*",
     "express": "*",
+    "express-fileupload": "^0.4.0",
     "g": "^2.0.1",
     "jsonwebtoken": "*",
     "mongoose": "*",
     "mongoose-timestamp": "^0.6.0",
     "passport": "*",
-    "passport-jwt": "^3.0.1",
-    "express-fileupload": "^0.4.0"
+    "passport-jwt": "^3.0.1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@angular/cli": "^1.7.3",
-    "nodemon": "^1.17.2"
+    "nodemon": "^1.17.3"
   }
 }

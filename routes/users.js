@@ -22,7 +22,8 @@ router.post('/register', (req, res, next) => {
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        role: req.body.role 
+        role: req.body.role,
+        skill: req.body.skill
     });
 
     User.addUser(newUser, (err, user) => {
@@ -31,6 +32,9 @@ router.post('/register', (req, res, next) => {
             res.json({success: false, message: "Registration failed"});
         }
         else{
+
+            user.password = undefined;
+
             res.json({success:true, user: user, message: 'User registered'});
         }
 
@@ -234,14 +238,111 @@ router.post('/update-profile-pic', passport.authenticate('jwt', {session: false}
 
     if(req.files) {
 
-        const rand = (Math.random() * 10) + (Math.random() * 10);
+        const rand = Math.floor((Math.random() * 10)) + "_" + Math.floor((Math.random() * 10));
 
-        return res.json(req.files);
+        const profilePic = req.files.fileItem;
+
+        const profilePicName = rand + profilePic.name;
+
+        // return res.json(__dirname + '/../uploads/profile-pics/'+ profilePicName);
+        
+        profilePic.mv(__dirname + '/../uploads/profile-pics/'+ profilePicName, (err) => {
+
+            if(err){
+
+                return res.status(500).send({'success':false, 'message':err});
+
+            } 
+            else{
+
+                User.updateProfilePicPath(req.body._id, profilePicName, (err, user) => {
+
+                    if(err) return res.status(500).send({'success':false, 'message':err});
+
+                    return res.json({ 
+                                        "success": true, 
+                                        "message": "Operation successful",
+                                        "user": user
+                                    });
+
+                });
+
+            }
+
+        });
 
     }
     else{
+        return res.json({"success":false, 'message':'No file found'});
+    }
+
+});
+
+router.post('/get-all-users', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+
+    User.find({}, {password: false}, (err, users) => {
+
+        if(err) return res.json({success: false, message: "Errors encountered", error: err});
+
+        return res.json({success: true, users: users});
+
+    });
+
+});
+
+router.post('/update-user-record', passport.authenticate('jwt', {session:false}), (req,res) => {
+    
+    const user = req.body;
+
+
+    // Check if user's password is set
+    if(user.password){
+
+        bcrypt.genSalt(10, (err, salt) => {
+                
+            bcrypt.hash(user.password, salt, (err, hash) => {
+
+                user.password = hash;
+
+                // Update record after getting hashed password
+
+                User.updateRecord(user, (err, newUser) => {
+
+                    if(err) throw err;
+
+                    return res.json({success: true, message: "Update successful", user: newUser});
+
+                });
+
+            })
+
+        });
 
     }
+    else {
+
+        User.updateRecord(user, (err, newUser) => {
+
+            if(err) throw err;
+
+            return res.json({success: true, message: "Update successful", user: newUser});
+
+        });
+
+    }
+
+});
+
+router.post('/delete-users', passport.authenticate('jwt', {session: false}), (req, res) => {
+
+    User.deleteUser(req.body._id, (err, deleteStatus) => {
+
+        if(err) throw err;
+
+        return res.json({success: true, message: "User successfully deleted"});
+
+    });
 
 });
 

@@ -19,6 +19,9 @@ import { LoginService } from './components/login/services/login-service.service'
 import { ProfileService } from './components/dashboard/components/profile/services/profile.service';
 import { UsersService } from './components/dashboard/components/users/services/users.service';
 import { ProjectsService } from './components/dashboard/components/projects/services/projects.service';
+import { FileUploadService } from './services/file-upload.service';
+import { UserAvatarService } from './services/user-avatar-service.service';
+
 import { DashboardRouteConfig } from './route-configs/dashboard-routes';
 
 const routes: Routes = [
@@ -48,6 +51,8 @@ const routes: Routes = [
     ProjectsService,
     ProfileService,
     UsersService,
+    FileUploadService,
+    UserAvatarService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
