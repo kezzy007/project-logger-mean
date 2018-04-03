@@ -243,6 +243,7 @@ router.post('/update-profile-pic', passport.authenticate('jwt', {session: false}
         const profilePic = req.files.fileItem;
 
         const profilePicName = rand + profilePic.name;
+        //return res.json(__dirname + '/../uploads/profile-pics/'+ profilePicName);
 
         // return res.json(__dirname + '/../uploads/profile-pics/'+ profilePicName);
         

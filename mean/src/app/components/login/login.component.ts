@@ -4,6 +4,12 @@ import { Router } from '@angular/router';
 import { User } from '../../classes/user';
 import { LoginService } from './services/login-service.service';
 
+import {
+  AuthService,
+  FacebookLoginProvider,
+  GoogleLoginProvider
+} from 'angular5-social-login';
+
 
 @Component({
   selector: 'app-login',
@@ -17,7 +23,8 @@ export class LoginComponent implements OnInit {
   user = { email:'', password:'' };
 
   constructor(private router: Router,
-              private loginService: LoginService) { 
+              private loginService: LoginService,
+              private socialAuthService: AuthService) { 
      
   }
 
@@ -42,6 +49,25 @@ export class LoginComponent implements OnInit {
 
         });
 
+  }
+
+  socialSignIn(socialPlatform : string) {
+    let socialPlatformProvider;
+    if(socialPlatform == "facebook"){
+      socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
+    }else if(socialPlatform == "google"){
+      socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
+    }
+    
+    this.socialAuthService.signIn(socialPlatformProvider).then(
+      (userData) => {
+        console.log(socialPlatform+" sign in data : " , userData);
+        console.log(userData);
+        // Now sign-in with userData
+        
+            
+      }
+    );
   }
 
   storeTokenInLocalStorage(token) {

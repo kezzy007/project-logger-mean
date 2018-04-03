@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders, HttpEventType, HttpRequest, HttpErrorResponse,
 
 import { FormControl, FormGroup, Validators, NgForm } from '@angular/forms';
 import { FileUploadService } from '../../../../services/file-upload.service';
+import { UserAvatarService } from '../../../../services/user-avatar.service';
+
 
 @Component({
   selector: 'app-profile',
@@ -43,7 +45,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
   constructor(private profileService: ProfileService,
-              private fileUploadService: FileUploadService) { }
+              private fileUploadService: FileUploadService,
+              private userAvatarService: UserAvatarService) { }
 
     ngOnInit() {
 
@@ -83,8 +86,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
           if (event.type === HttpEventType.Response) {
             console.log(event.body);
+            this.userAvatarService.notifyAvatarChange(event.body.user.profile_pic);
             this.uploadComplete = true;
             this.serverResponse = event.body;
+
           }
         }
 
@@ -116,7 +121,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                                 .fileUpload(this.fileToUpload, this.profilePicUploadUrl, this.userRecord)
                                 .subscribe( (progressEvent) => this.handleProgress(progressEvent),
                                             (error) => {
-                                                alert(error);
+                                                alert(error.message + " ---- " + error.statusText);
                                                 console.log('Server error' + error);
                                             });
 

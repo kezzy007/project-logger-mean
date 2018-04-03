@@ -92,6 +92,46 @@ export class ProjectsComponent implements OnInit {
         (error) => console.log("error : " + error.response));
   }
 
+  assignUsers(project){
+
+    this.currentProject = project;
+
+    // Display loading icon 
+    this.displayLoadingIcon();
+
+    var projectAssignedUsers = this.getProjectAssignedUsers(this.currentProject);
+
+    // //console.log(projectAssignedUsers);
+
+    this.showModal = true; 
+                        project_title: project.title, 
+                        allUsers: this.allUsers, 
+                        projectAssignedUsers: projectAssignedUsers,
+                    });
+
+  }
+
+  getProjectAssignedUsers(project){
+
+    var result = [];
+   
+    for(var i = 0; i < this.allProjectsAssignedUsers.length; i++){
+         
+        if(project.id === this.allProjectsAssignedUsers[i].project_id){
+            
+            result.push(this.allProjectsAssignedUsers[i].user);
+
+        }
+
+    }
+    
+    return result;
+  }
+
+  displayLoadingIcon() {
+    
+  }
+
   initializeInstanceVariables() {
 
     this.projects = [];

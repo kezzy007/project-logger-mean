@@ -7,6 +7,7 @@ import { SharedModule } from './shared.module';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 import { MomentModule } from 'angular2-moment';
+import {  SocialLoginModule,  AuthServiceConfig,  GoogleLoginProvider,  FacebookLoginProvider } from "angular5-social-login";
 
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
@@ -20,7 +21,7 @@ import { ProfileService } from './components/dashboard/components/profile/servic
 import { UsersService } from './components/dashboard/components/users/services/users.service';
 import { ProjectsService } from './components/dashboard/components/projects/services/projects.service';
 import { FileUploadService } from './services/file-upload.service';
-import { UserAvatarService } from './services/user-avatar-service.service';
+import { UserAvatarService } from './services/user-avatar.service';
 
 import { DashboardRouteConfig } from './route-configs/dashboard-routes';
 
@@ -29,6 +30,23 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: '**', redirectTo: 'login', pathMatch: 'full'}  ];
+
+// Configs 
+export function getAuthServiceConfigs() {
+  let config = new AuthServiceConfig(
+      [
+        {
+          id: FacebookLoginProvider.PROVIDER_ID,
+          provider: new FacebookLoginProvider("1810655365645838")
+        },
+        {
+          id: GoogleLoginProvider.PROVIDER_ID,
+          provider: new GoogleLoginProvider("Your-Google-Client-Id")
+        },
+      ]
+  );
+  return config;
+}
 
 @NgModule({
   declarations: [
@@ -44,6 +62,7 @@ const routes: Routes = [
     SharedModule,
     DashboardModule,
     MomentModule,
+    SocialLoginModule,
     RouterModule.forRoot(routes)
   ],
   providers: [
@@ -53,6 +72,10 @@ const routes: Routes = [
     UsersService,
     FileUploadService,
     UserAvatarService,
+    {
+      provide: AuthServiceConfig,
+      useFactory: getAuthServiceConfigs
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

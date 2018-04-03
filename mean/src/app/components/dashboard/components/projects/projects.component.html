@@ -21,7 +21,7 @@
       <!-- Collapse buttons -->
       <div class="col-md-12">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-4">
             <button class="btn btn-primary" 
               [attr.type]="'button'" 
               [attr.data-toggle]="'collapse'"
@@ -38,10 +38,23 @@
             <br>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-8">
+            <!-- Assign users button -->
+          
+              <!-- <span class="badge badge-pill orange" v-if="isAdmin()" @click="assignUsers(project)"> 
+                              <i class="fa fa-user-plus" aria-hidden="true"></i> Assign users
+              </span> -->
+              <button class="btn btn-warning" 
+                      *ngIf="isAdmin()" 
+                      (click)="assignUsers(project)">
+                  <i class="fa fa-user-plus" aria-hidden="true"></i> Assign users
+              </button>
+          
+            
             <button class="btn btn-primary"  (click)="logFor(project)">
               <i class="fa fa-plus"></i> &nbsp;LOG
             </button>
+
           </div>
           </div>
       </div>
