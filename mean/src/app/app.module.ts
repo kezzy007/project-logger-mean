@@ -7,7 +7,7 @@ import { SharedModule } from './shared.module';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 import { MomentModule } from 'angular2-moment';
-import {  SocialLoginModule,  AuthServiceConfig,  GoogleLoginProvider,  FacebookLoginProvider } from "angular5-social-login";
+import {  SocialLoginModule,  AuthServiceConfig,  GoogleLoginProvider,  FacebookLoginProvider } from 'angular5-social-login';
 
 
 import { AuthInterceptor } from './interceptors/auth-interceptor';
@@ -33,7 +33,7 @@ const routes: Routes = [
 
 // Configs 
 export function getAuthServiceConfigs() {
-  let config = new AuthServiceConfig(
+  const config = new AuthServiceConfig(
       [
         {
           id: FacebookLoginProvider.PROVIDER_ID,

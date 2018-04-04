@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, , Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as $ from 'jquery';
 
 @Component({
@@ -16,6 +16,7 @@ export class ModalComponent implements OnInit {
   @Input() projectProps;
   @Input() userProps;
   passwordsMatch: boolean;
+  usersAssignedForProject;
   tempPasswordConfirm = '';
   op_type = null;
   allOpTypes = {
@@ -31,14 +32,26 @@ export class ModalComponent implements OnInit {
     USER: 'user'
   };
 
-  constructor() { }
+  constructor() {
+
+    
+
+  }
 
   ngOnInit() {
 
    // this.showModal();
-   
    this.op_type = this.projectProps ? 
-                  this.projectProps.op_type : this.userProps.op_type;
+   this.projectProps.op_type : this.userProps.op_type;
+
+    switch(this.op_type){
+    case this.allOpTypes.assignUsers:
+    this.sortUserAssignedForProject();
+    break;
+
+    default:
+    break;
+    }
 
   }
 
@@ -61,14 +74,14 @@ export class ModalComponent implements OnInit {
       this.projectProps.multi_props.log_admin_response = $receivedValue;
 
     }
-    
+
     // Check if using projectProps from project component
     // If not emits userProps from user component
     this.projectProps ? this.modalDone.emit(this.projectProps) :
                          this.modalDone.emit(this.userProps) ;
 
   }
-  
+
   updateUserRole($event, roleType){
 
     //console.log($event.target.checked, roleType);
@@ -85,7 +98,7 @@ export class ModalComponent implements OnInit {
     this.passwordsMatch = this.userProps.props.password == this.userProps.tempPasswordConfirm;
   }
 
-  togglePasswordVisibility($event, fieldId){
+  togglePasswordVisibility($event, fieldId) {
 
       var passwordField = document.getElementById(fieldId);
 
@@ -99,50 +112,53 @@ export class ModalComponent implements OnInit {
 
   }
 
-  userAssignedForProject(user){
-            
-    var result = '';
-    const projAssUsers = this.projectProps.props.projectAssignedUsers;
+  validateUserAssignedForProject(user, index) {
 
-    if(projAssUsers !== undefined){
+    this.projectProps.props.projectAssignedUsers.find((projAssUsers) => {
 
-        projAssUsers.forEach((assignedUser, index) => {
+      if (projAssUsers._id === user._id) {
 
-          if(user.id === assignedUser.id){
-                
-            projAssUsers.splice(index, 1);
+        this.usersAssignedForProject[index] = 'checked';
 
-            this.projectProps.props.selectedUsersList.push(user);
+        this.projectProps.props.selectedUsersList.push(user);
 
-            result = "checked";
-            
-            return result;
+      } else {
 
-          }
+        this.usersAssignedForProject[index] = '';
 
+      }
+
+      return;
+    });
+
+    // return false;
+  }
+
+  sortUserAssignedForProject() {
+
+    this.usersAssignedForProject = Array(this.projectProps.props.allUsers.length);
+
+    this.projectProps.props.allUsers
+        .forEach((user, index) => {
+
+           this.validateUserAssignedForProject(user, index);
 
         });
 
-        return result;
-
-    }else{
-
-        return result;
-
-    }   
-    
+        console.log(this.usersAssignedForProject);
   }
 
-  toggleUserSelectionState(user){
+  toggleUserSelectionState(user) {
 
-    // //console.log('sdfsf', this.selectedUsersList, this.selectedUsersList.indexOf(user));
+    console.log('selected users list', this.projectProps.props.selectedUsersList);
 
-    if(this.userSelected(user)){
+    if (this.userSelected(user)) {
+
+        console.log('removing user');
 
         this.removeUserFromSelection(user);
 
-    }
-    else{
+    } else {
 
         this.addUserToSelection(user);
 
@@ -150,10 +166,10 @@ export class ModalComponent implements OnInit {
 
   }
 
-  userSelected(user){
+  userSelected(user) {
 
     // returns true if user's index is !== -1
-    return !(this.projectProps.props.selectedUsersList.indexOf(user) == -1);
+    return !(this.projectProps.props.selectedUsersList.indexOf(user) === -1);
 
   }
 
@@ -166,9 +182,11 @@ export class ModalComponent implements OnInit {
 
   removeUserFromSelection(user){
 
+    console.log('removing user', this.projectProps.props.selectedUsersList);
       this.projectProps.props.selectedUsersList
-          .splice(this.projectProps.props.selectedUsersList.indexOf(user),1);
+          .splice(this.projectProps.props.selectedUsersList.indexOf(user), 1);
 
+    console.log('removed user', this.projectProps.props.selectedUsersList);
   }
 
   isAdmin() {

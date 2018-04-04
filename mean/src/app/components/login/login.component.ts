@@ -51,24 +51,24 @@ export class LoginComponent implements OnInit {
 
   }
 
-  socialSignIn(socialPlatform : string) {
-    let socialPlatformProvider;
-    if(socialPlatform == "facebook"){
-      socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
-    }else if(socialPlatform == "google"){
-      socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
-    }
+  // socialSignIn(socialPlatform : string) {
+  //   let socialPlatformProvider;
+  //   if(socialPlatform == "facebook"){
+  //     socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
+  //   }else if(socialPlatform == "google"){
+  //     socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
+  //   }
     
-    this.socialAuthService.signIn(socialPlatformProvider).then(
-      (userData) => {
-        console.log(socialPlatform+" sign in data : " , userData);
-        console.log(userData);
-        // Now sign-in with userData
+  //   this.socialAuthService.signIn(socialPlatformProvider).then(
+  //     (userData) => {
+  //       console.log(socialPlatform+" sign in data : " , userData);
+  //       console.log(userData);
+  //       // Now sign-in with userData
         
             
-      }
-    );
-  }
+  //     }
+  //   );
+  // }
 
   storeTokenInLocalStorage(token) {
 

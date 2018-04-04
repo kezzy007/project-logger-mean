@@ -368,4 +368,18 @@ router.post('/delete-users', passport.authenticate('jwt', {session: false}), (re
 
 });
 
+router.post('/save-assigned-users', passport.authenticate('jwt', {session: false}), (req, res) => {
+
+
+    ProjectUsers.saveAssignedUsersForProject( req.body.project_id, req.body.assignedUsers, (err, saveStatus) => {
+
+        if(err) throw err;
+
+        return res.json({success: true, message: 'Operation successful', status: saveStatus});
+
+    });
+
+});
+
+
 module.exports = router;

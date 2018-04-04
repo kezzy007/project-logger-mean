@@ -54,7 +54,7 @@ export class ProjectsService {
 
   saveAssignedUsers(projAndAssUsers) {
 
-    return this.http.post('/save-assigned-users', projAndAssUsers )
+    return this.http.post(this.hostUrl + '/users/save-assigned-users', projAndAssUsers )
                     .map(response => response);
 
   }

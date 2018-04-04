@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ProjectsService } from './services/projects.service';
+import { User } from '../../../../classes/user';
 
 interface Iresponse {
   success: string;
@@ -111,7 +112,7 @@ export class ProjectsComponent implements OnInit {
     // Display loading icon 
     this.displayLoadingIcon();
 
-    const projectAssignedUsers = this.getProjectAssignedUsers(this.currentProject);
+    const projectAssignedUsers: Array<User> = this.getProjectAssignedUsers(this.currentProject);
 
     console.log(projectAssignedUsers);
 
@@ -123,28 +124,26 @@ export class ProjectsComponent implements OnInit {
           projectAssignedUsers: projectAssignedUsers,
           selectedUsersList: []
       }
-    }
+    };
 
-    this.showModal = true; 
-                        
-                    
+    this.showModal = true;
 
   }
 
   getProjectAssignedUsers(project){
 
-    var result = [];
-   
+    const result = [];
+
     this.allProjectAssignedUsers.forEach((projAssUsers) => {
 
-      if(project.id === projAssUsers.project_id){
-            
+      if(project._id === projAssUsers.project_id){
+
         result.push(projAssUsers.user);
 
       }
 
     });
-    
+
     return result;
   }
 
@@ -298,25 +297,31 @@ export class ProjectsComponent implements OnInit {
   saveAssignedUsersForProject(assignedUsers){
 
     // //console.log({assignedUsers: assignedUsers, projectId: this.currentProject.id});
+    const userArray = [];
+
+    assignedUsers.forEach((user) => {
+
+        userArray.push({project_id: this.currentProject._id, user: user});
+
+    });
 
     this.projectsService
         .saveAssignedUsers(
           {
-            assignedUsers: assignedUsers, 
-            projectId: this.currentProject.id
+            assignedUsers: userArray,
+            project_id: this.currentProject._id
           }
         )
         .subscribe((response: IGeneralResp) => {
-            
-            // //console.log(response);
-            
-            if(response.success){
-                this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);   
+
+            console.log(response);
+
+            if (response.success) {
+                this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+            } else {
+                this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
             }
-            else{
-                this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);   
-            }
-            
+
         });
 
   }

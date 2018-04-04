@@ -164,35 +164,32 @@
                 <div class="card w-100" *ngIf="isAssignUsers()">
                     <div class="card-body" style="overflow-y:scroll;">
                       
-                        <p class="card-text">
+                        <div class="card-text">
                             
-                            <!-- Loop through all users and place a checkbox in front of each user -->
                               <div class="list-group">
                                   
-                                  <a
-                                      class="list-group-item waves-effect"
-                                      *ngFor="let user in usersList;">
+                                  <a class="list-group-item waves-effect"
+                                      *ngFor="let user of projectProps.props.allUsers; index as i;">
 
                                       <div class="form-check">
                                       
                                           <input class="form-check-input filled-in" 
                                                   type="checkbox" 
-                                                  value=""
-                                                  [checked]="userAssignedForProject(user)" 
-                                                  (change)="toggleUserSelectionState(user)">
+                                                  [checked]="usersAssignedForProject[i]" 
+                                                  (change)="toggleUserSelectionState(user)"/>
                                           
                                           {{ user.name }} 
                                       
-                                          <span *ngIf="user.role == admin" class="badge badge-pill red ml-5"> Admin</span>
+                                          <span *ngIf="user.role == 'admin'" class="badge badge-pill red ml-5"> Admin</span>
 
-                                          <span *ngIf="user.role == user" class="badge badge-pill ml-5 primary-color-dark"> {{ user.skill }}</span>
+                                          <span *ngIf="user.role == 'user'" class="badge badge-pill ml-5 primary-color-dark"> {{ user.skill }}</span>
 
                                       </div>
                                       
                                   </a>
 
                               </div>
-                        </p>
+                            </div>
                       
                     </div>
                 </div>
