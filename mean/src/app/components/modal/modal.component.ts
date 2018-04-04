@@ -99,6 +99,78 @@ export class ModalComponent implements OnInit {
 
   }
 
+  userAssignedForProject(user){
+            
+    var result = '';
+    const projAssUsers = this.projectProps.props.projectAssignedUsers;
+
+    if(projAssUsers !== undefined){
+
+        projAssUsers.forEach((assignedUser, index) => {
+
+          if(user.id === assignedUser.id){
+                
+            projAssUsers.splice(index, 1);
+
+            this.projectProps.props.selectedUsersList.push(user);
+
+            result = "checked";
+            
+            return result;
+
+          }
+
+
+        });
+
+        return result;
+
+    }else{
+
+        return result;
+
+    }   
+    
+  }
+
+  toggleUserSelectionState(user){
+
+    // //console.log('sdfsf', this.selectedUsersList, this.selectedUsersList.indexOf(user));
+
+    if(this.userSelected(user)){
+
+        this.removeUserFromSelection(user);
+
+    }
+    else{
+
+        this.addUserToSelection(user);
+
+    }
+
+  }
+
+  userSelected(user){
+
+    // returns true if user's index is !== -1
+    return !(this.projectProps.props.selectedUsersList.indexOf(user) == -1);
+
+  }
+
+  addUserToSelection(user){
+
+      if( !this.userSelected(user) )
+          this.projectProps.props.selectedUsersList.push(user);
+      
+  }
+
+  removeUserFromSelection(user){
+
+      this.projectProps.props.selectedUsersList
+          .splice(this.projectProps.props.selectedUsersList.indexOf(user),1);
+
+  }
+
   isAdmin() {
 
     return JSON.parse(localStorage.getItem('user')).role.toLowerCase() === this.USER_ROLES.ADMIN;

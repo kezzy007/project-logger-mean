@@ -6,6 +6,14 @@ interface Iresponse {
   log?: Object;
   projects?: Array<{}>;
   logs?: Array<{}>;
+  project_users?: Array<{}>; 
+  all_users?: Array<{}>;
+}
+
+interface IGeneralResp{
+  success: boolean;
+  message: string;
+
 }
 
 @Component({
@@ -22,6 +30,8 @@ export class ProjectsComponent implements OnInit {
   currentProject;
   currentViewingLog;
   userRole;
+  allUsers;
+  allProjectAssignedUsers;
   EVENTS = {
     ADD_PROJECT: 'add_project'
   };
@@ -87,6 +97,8 @@ export class ProjectsComponent implements OnInit {
 
               this.projects = response.projects;
               this.logs = response.logs;
+              this.allUsers = response.all_users;
+              this.allProjectAssignedUsers = response.project_users;
 
         },
         (error) => console.log("error : " + error.response));
@@ -99,15 +111,23 @@ export class ProjectsComponent implements OnInit {
     // Display loading icon 
     this.displayLoadingIcon();
 
-    var projectAssignedUsers = this.getProjectAssignedUsers(this.currentProject);
+    const projectAssignedUsers = this.getProjectAssignedUsers(this.currentProject);
 
-    // //console.log(projectAssignedUsers);
+    console.log(projectAssignedUsers);
+
+    this.projectProps = {
+      op_type: this.allOpTypes.assignUsers,
+      props: {
+          project_title: project.title, 
+          allUsers: this.allUsers, 
+          projectAssignedUsers: projectAssignedUsers,
+          selectedUsersList: []
+      }
+    }
 
     this.showModal = true; 
-                        project_title: project.title, 
-                        allUsers: this.allUsers, 
-                        projectAssignedUsers: projectAssignedUsers,
-                    });
+                        
+                    
 
   }
 
@@ -115,21 +135,21 @@ export class ProjectsComponent implements OnInit {
 
     var result = [];
    
-    for(var i = 0; i < this.allProjectsAssignedUsers.length; i++){
-         
-        if(project.id === this.allProjectsAssignedUsers[i].project_id){
+    this.allProjectAssignedUsers.forEach((projAssUsers) => {
+
+      if(project.id === projAssUsers.project_id){
             
-            result.push(this.allProjectsAssignedUsers[i].user);
+        result.push(projAssUsers.user);
 
-        }
+      }
 
-    }
+    });
     
     return result;
   }
 
   displayLoadingIcon() {
-    
+
   }
 
   initializeInstanceVariables() {
@@ -161,6 +181,10 @@ export class ProjectsComponent implements OnInit {
       case this.allOpTypes.viewLog:
         this.markLogAs($event);
         break;
+
+      case this.allOpTypes.assignUsers:
+      this.saveAssignedUsersForProject($event.props.selectedUsersList);
+      break;
 
       default:
       break;
@@ -268,6 +292,32 @@ export class ProjectsComponent implements OnInit {
   removeLogFromProject(log) {
 
     this.logs.splice(this.logs.indexOf(log), 1);
+
+  }
+
+  saveAssignedUsersForProject(assignedUsers){
+
+    // //console.log({assignedUsers: assignedUsers, projectId: this.currentProject.id});
+
+    this.projectsService
+        .saveAssignedUsers(
+          {
+            assignedUsers: assignedUsers, 
+            projectId: this.currentProject.id
+          }
+        )
+        .subscribe((response: IGeneralResp) => {
+            
+            // //console.log(response);
+            
+            if(response.success){
+                this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);   
+            }
+            else{
+                this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);   
+            }
+            
+        });
 
   }
 

@@ -32,6 +32,12 @@ const userSchema = mongoose.Schema({
 
 const User = module.exports = mongoose.model('User',userSchema);
 
+module.exports.getAllUsers = (callback) => {
+
+    User.find({}, {name:1, username: 1, email: 1, role: 1, skill:1}, callback);
+
+};
+
 module.exports.updateRecord = (userObj, callback) => {
 
     User.findOneAndUpdate({_id:userObj._id}, 

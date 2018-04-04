@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const Logs = require('../models/logs');
 const Projects = require('../models/projects');
+const ProjectUsers =  require('../models/project_users');
 
 // Authentication modules
 const passport = require('passport');
@@ -113,11 +114,31 @@ router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res
 
             if(err) throw err;
             
+            // This gets all the logs for the admin
             Logs.getLogs((err, logs) => {
 
                 if(err) throw err;
 
-                return res.json({success: true, projects: projects, logs: logs});
+                // This gets all the users assigned to all projects
+                ProjectUsers.getAllUsers((err, projectUsers) => {
+
+                    if(err) throw err;
+
+                    User.getAllUsers((err, all_users) => {
+
+                        if(err) throw err;
+
+                        return res.json({
+                            success: true, 
+                            projects: projects, 
+                            logs: logs,
+                            all_users: all_users,
+                            project_users: projectUsers
+                        });
+
+                    });
+
+                });
 
             });
 
