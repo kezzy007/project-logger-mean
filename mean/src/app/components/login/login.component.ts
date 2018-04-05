@@ -20,26 +20,57 @@ import {
 export class LoginComponent implements OnInit {
 
   userForm;
-  user = { email:'', password:'' };
+  user = { email: '', password: '' };
+  loggedIn = true;
 
   constructor(private router: Router,
               private loginService: LoginService,
-              private socialAuthService: AuthService) { 
-     
+              private socialAuthService: AuthService) {
+
   }
 
   ngOnInit() {
 
+    this.checkIfLoggedIn();
+
+  }
+
+  checkIfLoggedIn() {
+
+    if (!localStorage.getItem('user')) {
+      this.loggedIn = false;
+      return;
+    }
+
+    this.displayLogoutButton();
+
+    this.redirectToDashboard();
+
+  }
+
+  displayLogoutButton() {
+    this.loginService.userLoggedIn.emit(true);
+  }
+
+  redirectToDashboard() {
+
+    this.router.navigateByUrl('/dashboard');
+
   }
 
   onSubmit(){
-    
+
     console.log(this.user);
 
     this.loginService.login(this.user)
         .subscribe((response) => {
 
-          console.log(response);
+          // console.log(response);
+
+          if (!response.success) {
+            console.log('Login failed');
+            return;
+          }
 
           this.storeTokenInLocalStorage(response.token);
 

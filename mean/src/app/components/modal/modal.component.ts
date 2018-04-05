@@ -25,7 +25,7 @@ export class ModalComponent implements OnInit {
     viewLog: 'viewLog',
     assignUsers: 'assignUsers',
     addUser: 'addUser',
-    editUser: 'editUser',
+    editUser: 'editUser'
   };
   USER_ROLES = {
     ADMIN: 'admin',

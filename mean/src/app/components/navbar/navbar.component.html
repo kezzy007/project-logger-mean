@@ -1,9 +1,15 @@
-<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark indigo">
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark indigo fixed-top">
            
     <!-- Navbar brand -->
     <logo><a class="navbar-brand" [routerLink]="['/']">Project Logger</a></logo>
 
-    <!-- Collapsible content -->
-
+    
+        <!-- Collapsible content -->
+        <links>
+            <div class="col-12 d-flex justify-content-end">
+                <button class="btn btn-info pull-right" (click)="logout()"  *ngIf="loggedIn"> <i class="fa fa-out" aria-hidden="true"></i> Logout </button>
+            </div>
+        </links>
+    
 </mdb-navbar>
 <!--/.Navbar-->

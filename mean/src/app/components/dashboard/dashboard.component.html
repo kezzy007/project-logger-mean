@@ -1,25 +1,45 @@
-<div class="row px-0 fixed" style="max-height:90%;">
+<div class="row px-0 position-fixed" style="height:92vh; max-height:92vh; width: 100vw; max-width: 100vw; margin-top:8vh;">
 
 <!-- Sidebar Menu -->
-<div class="col-md-3">
-    <aside class="unique-color-dark">
+<div class="col-md-3 col-sm-12">
+    <aside class="">
 
-    <!-- The profile picture is displayed here -->
-    <!--Avatar-->
-    <div class="avatar mx-auto white">
-        <img src="{{ folderPath + userAvatar }}" alt="avatar mx-auto white" class="rounded-circle img-fluid">
+    <div class="row">
+        <div class="col-md-7 col-sm-12">
+            <!-- The profile picture is displayed here -->
+            <!--Avatar-->
+            <div class="avatar mx-auto white">
+                <img src="{{ folderPath + userAvatar }}" 
+                        alt="{{ getUser().name }} profile pic" 
+                        class="rounded-circle img-fluid h-25"/>
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-12">
+            <div class="text-center mt-3">
+                <strong class="grey-text">{{ getUser().name }}</strong>
+                <br/>
+                <span class="badge badge-pill red">{{ getUser().role }}</span>
+                <h6>{{ getUser().skill }}</h6>
+            </div>    
+        </div>
     </div>
 
-    <ul class="list-group">
-        <li class="list-group-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"><a [routerLink]="['projects']">Projects</a></li>
-        <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['profile']">Profile</a></li>
-        <li class="list-group-item" [routerLinkActive]="['active']"><a [routerLink]="['users']">Users</a></li>
+    <ul class="list-group" style="margin-top:100px;">
+        <li class="list-group-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+            <a class="slight-blue" [routerLink]="['projects']">Projects</a>
+        </li>
+        <li class="list-group-item" [routerLinkActive]="['active']">
+            <a class="slight-blue" [routerLink]="['profile']">Profile</a>
+        </li>
+        <li class="list-group-item" [routerLinkActive]="['active']">
+            <a class="slight-blue" [routerLink]="['users']">Users</a>
+        </li>
     </ul>
     </aside>
 </div>
 
     <!-- Router outlet -->
-    <div class="col-md-9" style="overflow-y:scroll;">
+    <div class="col-md-9 col-sm-12 pt-3" style="overflow-y:scroll;">
         <router-outlet></router-outlet>
     </div>
 

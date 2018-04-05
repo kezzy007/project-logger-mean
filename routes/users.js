@@ -381,5 +381,15 @@ router.post('/save-assigned-users', passport.authenticate('jwt', {session: false
 
 });
 
+router.post('/logout', passport.authenticate('jwt', {session: false}), (req,res) => {
+
+    if(!req.body.user) return res.json({success: false, message: 'Logout failed'});
+
+    req.logout();
+    
+    return res.json({ success: true, message: 'Logout successful'});
+
+});
+
 
 module.exports = router;
