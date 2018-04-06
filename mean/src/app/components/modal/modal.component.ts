@@ -1,4 +1,4 @@
-import { Component, OnInit, , Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as $ from 'jquery';
 
 @Component({

@@ -70,6 +70,9 @@ export class ProjectsComponent implements OnInit {
 
   showModal = false;
 
+  showCollapsible;
+
+
   @Output() projectsEvent = new EventEmitter<any>();
 
   constructor(private projectsService: ProjectsService) {
@@ -101,8 +104,22 @@ export class ProjectsComponent implements OnInit {
               this.allUsers = response.all_users;
               this.allProjectAssignedUsers = response.project_users;
 
+              this.initializeCollapsibleArray();
         },
-        (error) => console.log("error : " + error.response));
+        (error) => console.log('error : ' + error.response));
+  }
+
+  initializeCollapsibleArray() {
+
+    this.showCollapsible = Array(this.projects.length);
+    this.showCollapsible.map((collapsible) => false);
+
+  }
+
+  toggleCollapse(i) {
+
+    this.showCollapsible[i] = !this.showCollapsible[i];
+
   }
 
   assignUsers(project){
@@ -130,13 +147,13 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  getProjectAssignedUsers(project){
+  getProjectAssignedUsers(project) {
 
     const result = [];
 
     this.allProjectAssignedUsers.forEach((projAssUsers) => {
 
-      if(project._id === projAssUsers.project_id){
+      if (project._id === projAssUsers.project_id) {
 
         result.push(projAssUsers.user);
 
@@ -332,9 +349,9 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  getDatePublished(log){
+  getDatePublished(log) {
 
-    var date = log.createdAt.replace('T', ' ');
+    const date = log.createdAt.replace('T', ' ');
 
     return date;
 

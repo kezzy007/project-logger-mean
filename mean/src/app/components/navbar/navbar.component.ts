@@ -18,12 +18,21 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
 
+    if ( this.getUser() ) {
+      this.loggedIn = true;
+      return;
+    }
+
     const subscribedService = this.loginService.userLoggedIn.subscribe((loggedIn) => {
 
       this.loggedIn = loggedIn;
 
     });
 
+  }
+
+  getUser() {
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   logout() {
