@@ -151,10 +151,12 @@
 
 
 
+
+
+</div>
+
   <!-- Modal component -->
   <app-modal *ngIf="showModal"
               [projectProps]="projectProps"
               (modalClosed)="showModal = false"
               (modalDone)="saveOperation($event)"></app-modal>
-
-</div>

@@ -246,11 +246,15 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  saveProject(project) {
+  saveProject(project) { 
 
-    delete project['op_type'];
+    console.log(project);
 
-    this.projectsService.saveProject(project)
+    const projectClone = JSON.parse(JSON.stringify(project));
+
+    delete projectClone['op_type'];
+
+    this.projectsService.saveProject(projectClone)
         .subscribe((response) => {
 
           if (response.success) {
