@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {  ToasterService, ToasterConfig } from 'angular5-toaster';
 import { Router } from '@angular/router';
 
 import { User } from '../../classes/user';
@@ -20,12 +21,36 @@ import {
 export class LoginComponent implements OnInit {
 
   userForm;
+  
   user = { email: '', password: '' };
-  loggedIn = true;
 
-  constructor(private router: Router,
+  loggedIn = true;
+  
+  TOAST_OPTIONS = {
+    SUCCESS: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'success',
+    },
+    FAILURE: {
+        text: 'CLOSE',
+        duration: 5000,
+        type: 'error',
+    }
+  };
+  
+  public toasterconfig: ToasterConfig =  new ToasterConfig({
+      showCloseButton: true,
+      tapToDismiss: true,
+      timeout: 3000
+  });
+
+  constructor(
+              private router: Router,
               private loginService: LoginService,
-              private socialAuthService: AuthService) {
+              private socialAuthService: AuthService,
+              private toasterService: ToasterService
+            ) {
 
   }
 
@@ -60,7 +85,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
 
-    console.log(this.user);
+    // console.log(this.user);
 
     this.loginService.login(this.user)
         .subscribe((response) => {
@@ -68,7 +93,7 @@ export class LoginComponent implements OnInit {
           // console.log(response);
 
           if (!response.success) {
-            console.log('Login failed');
+
             return;
           }
 
@@ -110,6 +135,17 @@ export class LoginComponent implements OnInit {
   storeUserInLocalStorage(user) {
 
     window.localStorage.setItem('user', JSON.stringify(user));
+
+  }
+
+  displayToast(message, options) {
+
+    this.toasterService.pop(
+                                options.type,
+                                'New notification',
+                                !message && (options.type === 'failure') ?
+                                'Operation failed' : message || 'Operation successful'
+                            );
 
   }
 

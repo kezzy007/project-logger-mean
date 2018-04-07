@@ -1,14 +1,16 @@
-<div class="card">
+<div class="card mb-5">
 <!-- Project Title section -->
   <div class="card-title">
-    <div class="col-md-3">
-      Projects
-    </div>
+      <div class="row d-flex">
+        <div class="col-md-3 pt-4 pl-4">
+            <Strong> <i class="fa fa-task" aria-hidden="true"></i> Projects</Strong>
+        </div>
 
-    <div class="col-md-3 align-right">
+    <div class="col-md-8 text-right">
       <button class="btn btn-success" (click)="addNewProjectModal()">
         <i class="fa fa-plus" aria-hidden="true"></i> New project
       </button>
+    </div>
     </div>
   </div>
   <!-- End title section -->
@@ -36,7 +38,14 @@
                             <!-- Project Title and add user button -->
                             <h5 class="mb-0">
                                 
-                                {{ project.title }} <i class="fa fa-angle-down rotate-icon pull-right"></i>
+                                {{ project.title }} 
+                                <i [ngClass]="{
+                                                'fa':true,
+                                                'fa-angle-up':!showCollapsible[i],
+                                                'fa-angle-down':showCollapsible[i],
+                                                'rotate-icon': true,
+                                                'pull-right': true
+                                                }"></i>
 
                                 
 
@@ -145,6 +154,8 @@
 
                     </div>
 
+                    
+
                 </div>
             </div>
         </div>
@@ -158,5 +169,7 @@
   <!-- Modal component -->
   <app-modal *ngIf="showModal"
               [projectProps]="projectProps"
-              (modalClosed)="showModal = false"
+              (modalClosed)="modalClosed()"
               (modalDone)="saveOperation($event)"></app-modal>
+
+<toaster-container [toasterconfig]="toasterconfig"></toaster-container>

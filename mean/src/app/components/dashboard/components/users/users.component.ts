@@ -49,6 +49,22 @@ export class UsersComponent implements OnInit {
 
   }
 
+  modalClosed() {
+
+    this.showModal = false;
+    this.resetUserProps();
+
+  }
+
+  resetUserProps() {
+
+    Object.keys(this.userProps)
+    .forEach((userPropsKey) => {
+        this.userProps[userPropsKey] = '';
+    });
+
+  }
+
   saveOperation($event) {
 
     console.log($event);

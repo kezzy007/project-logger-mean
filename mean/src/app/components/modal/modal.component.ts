@@ -34,8 +34,6 @@ export class ModalComponent implements OnInit {
 
   constructor() {
 
-    
-
   }
 
   ngOnInit() {
@@ -62,8 +60,22 @@ export class ModalComponent implements OnInit {
 
   closeModal() {
 
+    this.uninitializeClassVariables();
     this.basicModal.hide();
     this.modalClosed.emit('closed');
+
+  }
+
+  uninitializeClassVariables() {
+
+    console.log('uninitializing class variables');
+
+    this.projectProps = null;
+    this.userProps = '';
+    this.passwordsMatch = false;
+    this.usersAssignedForProject = '';
+    this.tempPasswordConfirm = '';
+    this.op_type = null;
 
   }
 
@@ -100,14 +112,14 @@ export class ModalComponent implements OnInit {
 
   togglePasswordVisibility($event, fieldId) {
 
-      var passwordField = document.getElementById(fieldId);
+      const passwordField = document.getElementById(fieldId);
 
-      const toggledType = passwordField.getAttribute('type') == "password" ? "text" : "password";        
+      const toggledType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
 
       passwordField.setAttribute('type', toggledType);
 
       // Toggle the eye icon
-      $event.target.classList = $event.target.classList.contains('fa-eye')  ? 
+      $event.target.classList = $event.target.classList.contains('fa-eye')  ?
                                   'fa fa-eye-slash grey-text' :  'fa fa-eye grey-text';
 
   }
@@ -122,13 +134,11 @@ export class ModalComponent implements OnInit {
 
         this.projectProps.props.selectedUsersList.push(user);
 
-      } else {
-
-        this.usersAssignedForProject[index] = '';
+        return;
 
       }
 
-      return;
+
     });
 
     // return false;
@@ -173,11 +183,14 @@ export class ModalComponent implements OnInit {
 
   }
 
-  addUserToSelection(user){
+  addUserToSelection(user) {
 
-      if( !this.userSelected(user) )
-          this.projectProps.props.selectedUsersList.push(user);
-      
+      if ( !this.userSelected(user) ) {
+
+        this.projectProps.props.selectedUsersList.push(user);
+
+      }
+
   }
 
   removeUserFromSelection(user){

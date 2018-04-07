@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import {  ToasterService, ToasterConfig } from 'angular5-toaster';
+
 import { ProfileService } from './services/profile.service';
 import { HttpClient, HttpHeaders, HttpEventType, HttpRequest, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 
@@ -30,6 +32,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
             type: 'error',
         }
     };
+    public toasterconfig: ToasterConfig =  new ToasterConfig({
+        showCloseButton: true,
+        tapToDismiss: true,
+        timeout: 3000
+    });
+
     statusCreateForm: FormGroup;
     fileDescription: FormControl;
     fileToUpload: File  = null;
@@ -44,9 +52,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     myFileInput: any;
 
 
-  constructor(private profileService: ProfileService,
+  constructor(
+              private profileService: ProfileService,
               private fileUploadService: FileUploadService,
-              private userAvatarService: UserAvatarService) { }
+              private userAvatarService: UserAvatarService,
+              private toasterService: ToasterService
+            ) { }
 
     ngOnInit() {
 
@@ -155,10 +166,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     updateUsersProfile() {
 
+        console.log(this.userRecord);
+
         this.profileService.updateUsersProfile(this.userRecord)
             .subscribe((response) => {
 
-                    // console.log(response);
+                    console.log(response);
 
                     if (response.success) {
 
@@ -170,6 +183,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
                         this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
                     }
+
+                }, (error) => {
+
+                    this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
 
                 });
     }
@@ -190,6 +207,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   displayToast(message, options) {
 
+    this.toasterService.pop(
+                                options.type,
+                                'New notification',
+                                !message && (options.type === 'failure') ?
+                                'Operation failed' : message || 'Operation successful'
+                            );
 
   }
 }

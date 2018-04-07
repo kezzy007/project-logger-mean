@@ -1,13 +1,15 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { ToasterContainerComponent, ToasterService, ToasterConfig } from 'angular5-toaster';
 import { ProjectsService } from './services/projects.service';
 import { User } from '../../../../classes/user';
 
 interface Iresponse {
   success: string;
+  message?: string;
   log?: Object;
   projects?: Array<{}>;
   logs?: Array<{}>;
-  project_users?: Array<{}>; 
+  project_users?: Array<{}>;
   all_users?: Array<{}>;
 }
 
@@ -72,10 +74,18 @@ export class ProjectsComponent implements OnInit {
 
   showCollapsible;
 
-
   @Output() projectsEvent = new EventEmitter<any>();
 
-  constructor(private projectsService: ProjectsService) {
+  public toasterconfig: ToasterConfig =  new ToasterConfig({
+                                              showCloseButton: true,
+                                              tapToDismiss: true,
+                                              timeout: 3000
+                                          });
+
+  constructor(
+                private projectsService: ProjectsService,
+                private toasterService: ToasterService
+              ) {
 
       this.initializeInstanceVariables();
 
@@ -105,8 +115,10 @@ export class ProjectsComponent implements OnInit {
               this.allProjectAssignedUsers = response.project_users;
 
               this.initializeCollapsibleArray();
-        },
-        (error) => console.log('error : ' + error.response));
+        }, (error) => {
+          console.log(error.statusText);
+         // this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
+        });
   }
 
   initializeCollapsibleArray() {
@@ -122,7 +134,7 @@ export class ProjectsComponent implements OnInit {
 
   }
 
-  assignUsers(project){
+  assignUsers(project) {
 
     this.currentProject = project;
 
@@ -168,6 +180,13 @@ export class ProjectsComponent implements OnInit {
 
   }
 
+  modalClosed() {
+
+    this.showModal = false;
+    this.resetProjectProps();
+
+  }
+
   initializeInstanceVariables() {
 
     this.projects = [];
@@ -208,6 +227,15 @@ export class ProjectsComponent implements OnInit {
 
   }
 
+  resetProjectProps() {
+
+    Object.keys(this.projectProps)
+    .forEach((projectPropsKey) => {
+        this.projectProps[projectPropsKey] = '';
+    });
+
+  }
+
   addNewProjectModal() {
 
     this.projectProps.op_type = this.allOpTypes.addProject;
@@ -218,13 +246,20 @@ export class ProjectsComponent implements OnInit {
 
   displayToast(message, options) {
 
+      this.toasterService.pop(
+                                options.type,
+                                'New notification',
+                                !message && (options.type === 'failure') ?
+                                'Operation failed' : message || 'Operation successful'
+                              );
+
   }
 
   markLogAs(adminResponse) {
 
     const log = {
-                  'log_id': this.currentViewingLog.log._id, 
-                  'log_status': adminResponse.multi_props.log_admin_response 
+                  'log_id': this.currentViewingLog.log._id,
+                  'log_status': adminResponse.multi_props.log_admin_response
                 };
 
     this.projectsService.saveLogStatus(log)
@@ -242,13 +277,16 @@ export class ProjectsComponent implements OnInit {
           }
 
         },
-        (error) => console.log(error));
+        (error) => {
+                      console.log(error.statusText);
+                      this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
+                    });
 
   }
 
-  saveProject(project) { 
+  saveProject(project) {
 
-    console.log(project);
+    // console.log(project);
 
     const projectClone = JSON.parse(JSON.stringify(project));
 
@@ -256,6 +294,8 @@ export class ProjectsComponent implements OnInit {
 
     this.projectsService.saveProject(projectClone)
         .subscribe((response) => {
+
+          // this.resetProjectProps();
 
           if (response.success) {
             this.projects.push(response['project']);
@@ -267,6 +307,10 @@ export class ProjectsComponent implements OnInit {
 
           this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
 
+        },
+        (error) => {
+          console.log(error.statusText);
+          this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
         });
   }
 
@@ -282,9 +326,23 @@ export class ProjectsComponent implements OnInit {
     this.projectsService.saveLogForProject(logobject)
         .subscribe((response: Iresponse) => {
 
-          // console.log(response);
+          // this.resetProjectProps();
+
+          if (!response.success) {
+
+            this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
+
+            return;
+          }
+
           this.logs.push(response.log);
 
+          this.displayToast(response.message, this.TOAST_OPTIONS.SUCCESS);
+
+        },
+        (error) => {
+          console.log(error.statusText);
+          this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
         });
   }
 
@@ -305,7 +363,10 @@ export class ProjectsComponent implements OnInit {
             this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
         }
 
-    });
+      }, (error) => {
+        console.log(error.statusText);
+        this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
+      });
 
   }
 
@@ -343,6 +404,9 @@ export class ProjectsComponent implements OnInit {
                 this.displayToast(response.message, this.TOAST_OPTIONS.FAILURE);
             }
 
+        }, (error) => {
+          console.log(error.statusText);
+          this.displayToast('Operation failed', this.TOAST_OPTIONS.FAILURE);
         });
 
   }
