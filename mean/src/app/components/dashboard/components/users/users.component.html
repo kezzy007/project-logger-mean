@@ -16,6 +16,7 @@
               <th>Name</th>
               <th>Skill</th>
               <th>Role</th>
+              <th>Email</th>
               <th rowspan="2">Action</th>
           </tr>
       </thead>
@@ -25,9 +26,10 @@
       <tbody *ngIf="allUsers">
           <tr *ngFor="let user of allUsers; index as i; trackBy:userTrackByFunction">
               <th scope="row">{{ i + 1 }}</th>
-              <td> {{ user.name }} </td>
-              <td> {{ user.skill }} </td>
+              <td> {{ user.name || "Not activated"}} </td>
+              <td> {{ user.skill || "Not specified"}} </td>
               <td> {{ user.role }} </td>
+              <td> {{ user.email }} </td>
               <!-- Here -->
               <td class="p-0"> 
                   <div class="row">

@@ -84,10 +84,11 @@ module.exports.comparePassword = (inputPassword, retrievedHashedPassword, callba
 
 module.exports.addUser = function(newUser, callback){
 
+
     // Hash user's password
     bcryptjs.genSalt(10, (err, salt) => {
 
-        bcryptjs.hash(newUser.password, salt, (err, hashedPassword) => {
+        bcryptjs.hash(newUser.password || '', salt, (err, hashedPassword) => {
 
             if(err) throw err;
 

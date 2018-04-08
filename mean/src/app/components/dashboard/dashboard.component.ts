@@ -4,6 +4,7 @@ import { UserAvatarService } from '../../services/user-avatar.service';
 
 interface IUser {
   profile_pic?: string;
+  role: string;
 }
 
 @Component({
@@ -31,7 +32,7 @@ export class DashboardComponent implements OnInit {
 
     }
 
-    console.log('obtained pic',this.getUser());
+    // console.log('obtained pic',this.getUser());
 
     // Sets the profile pic of user if exists
     ( (userProfilePic) => {
@@ -48,12 +49,16 @@ export class DashboardComponent implements OnInit {
     this.userAvatarService.avatarChange
         .subscribe( (avatar) => {
 
-          console.log(avatar);
+          // console.log(avatar);
 
           this.userAvatar = avatar;
 
         });
 
+  }
+
+  isAdmin() {
+    return this.getUser().role.toUpperCase() === 'ADMIN';
   }
 
   getUser(): IUser {

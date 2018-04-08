@@ -21,6 +21,13 @@ module.exports.getAllUsers = (callback) => {
 
 }
 
+
+module.exports.getProjectsAssignedToUser = (user, callback) => {
+
+    ProjectUsers.find({ user: user },{_id:false, project_id: true, user: true}, callback);
+
+}
+
 module.exports.saveAssignedUsersForProject = (project_id, projAssUsers, callback) => {
 
     console.log(projAssUsers);

@@ -27,7 +27,8 @@ router.post('/register', (req, res, next) => {
         username: req.body.username,
         password: req.body.password,
         role: req.body.role,
-        skill: req.body.skill
+        skill: req.body.skill,
+        profile_pic: req.body.profile_pic
     });
 
     User.addUser(newUser, (err, user) => {
@@ -97,21 +98,31 @@ router.post('/profile', passport.authenticate('jwt', {session:false}), (req, res
 
 router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res, next) => {
 
+    const user = req.body.user;
 
-    if(req.body.user.role.toUpperCase() !== ROLE_ADMIN)
-        return res.json({success:false, message:"Unauthorized"});
 
-    // This returns all the projects for the admin
-    Projects.getProjects((err, projects) => {
+    // This returns all the projects for the admin / user
+    Projects.getProjects(user, (err, projects) => {
 
             if(err) throw err;
             
-            // This gets all the logs for the admin
-            Logs.getLogs((err, logs) => {
+            // This gets all the logs for the admin / user
+            Logs.getLogs(user, (err, logs) => {
 
                 if(err) throw err;
 
-                // This gets all the users assigned to all projects
+                // If user's role is user, return only the project and logs
+                if(user.role.toUpperCase() !== ROLE_ADMIN){
+
+                    return res.json({
+                        success: true, 
+                        projects: projects, 
+                        logs: logs
+                    });
+
+                }
+
+                // This gets all the users assigned to all projects *Only for the admin
                 ProjectUsers.getAllUsers((err, projectUsers) => {
 
                     if(err) throw err;
@@ -144,9 +155,10 @@ router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res
 router.post('/validate-social-login', (req, res) => {
 
     const userData = req.body.userData;
-    var email;
+    const DATA_PROVIDERS = { GOOGLE: 'google', FACEBOOK: 'facebook'}; 
+    var email = '';
 
-    if(userData.provider === 'google') {
+    if(userData.provider === DATA_PROVIDERS.GOOGLE) {
 
         const token = req.body.userData.id_token || ''; // For verification with google
         
@@ -166,22 +178,36 @@ router.post('/validate-social-login', (req, res) => {
             return res.json({success: false});
         }
 
-        if(!user.activated) {
-            //  If user is found with email, save other user properties if available
-           
+        if(user.activated) {
 
-                user.name = req.body.userData.name,
-                user.profile_pic= req.body.userData.image,
-                user.role,
-                user.activated= true
-                
-            
+            // console.log('user activated');
+            const result = signTokenWithUser(user, userData.image || '');
+    
+            return res.json({
+                    success: true,
+                    token: 'bearer '+ result.token,
+                    user: result.user
+                });
+    
+        }
 
-                user.save((err, user) => {
+        //  If user is found with email, save other user properties if available
+        
+        user.name = req.body.userData.name;
+        user.role = user.role || 'user';
+        user.activated= true;
+    
+        User.updateRecord( user, (err, newUser) => {
 
-                if(err) throw err;
+            if(err) throw err;
 
-                const result = signTokenWithUser(user);
+            console.log(newUser);
+
+            if(!newUser) {
+                return res.json({success: false});
+            }
+
+            const result = signTokenWithUser(newUser, userData.image || '');
 
             return res.json({
                     success: true,
@@ -189,26 +215,13 @@ router.post('/validate-social-login', (req, res) => {
                     user: result.user
                 });
                 
-
-        }); 
-    } else {
-
-        console.log('user activated');
-        const result = signTokenWithUser(user);
-
-        return res.json({
-                success: true,
-                token: 'bearer '+ result.token,
-                user: result.user
-            });
-
-    }
+        });
 
     });
 
 });
 
-function signTokenWithUser(user) {
+function signTokenWithUser(user, profile_pic) {
 
     const tempUser = {
         "_id": user._id,
@@ -216,7 +229,7 @@ function signTokenWithUser(user) {
         "email": user.email,
         "username": user.username,
         "role": user.role,
-        "profile_pic": user.profile_pic
+        "profile_pic": profile_pic
     };
 
     // Create token

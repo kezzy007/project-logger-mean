@@ -26,9 +26,19 @@ LogsSchema.plugin(timestamps);
 
 const Logs = module.exports = mongoose.model('Logs',LogsSchema);
 
-module.exports.getLogs = (callback) => {
+module.exports.getLogs = (user, callback) => {
 
-    Logs.find({}, callback);
+    if(user.role.toUpperCase() !== 'ADMIN') {
+
+        Logs.find({user:user}, callback);    
+
+    } else {
+
+        Logs.find({}, callback);
+
+    }
+
+    
 
 };
 
