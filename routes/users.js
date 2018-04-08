@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
+// Helper libraries
+const replaceDotsInEmail = require('../utils/helper-functions');
 
 // Models
 const User = require('../models/user');
@@ -136,28 +138,46 @@ router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res
 
 });
 
+
+
 // This handles google login token verification
 router.post('/validate-social-login', (req, res) => {
 
-    const token = req.body.userData.id_token || ''; // For verification with google
-    const email = req.body.userData.email;
+    const userData = req.body.userData;
+    var email;
 
-    // Check of email exists in database
+    if(userData.provider === 'google') {
+
+        const token = req.body.userData.id_token || ''; // For verification with google
+        
+        email = req.body.userData.email;
+        
+        // Server side token verification code here
+
+    }
 
     User.findOne({email: email}, (err, user) => {
 
+
+        if(err) throw err;
+
+        // If user not found return error message
+        if(user === null) {
+            return res.json({success: false});
+        }
+
         if(!user.activated) {
             //  If user is found with email, save other user properties if available
-            const newUser = new User({
+           
 
-                name: req.body.userData.name,
-                profile_pic: req.body.userData.image,
-                role: 'admin',
-                email: email
+                user.name = req.body.userData.name,
+                user.profile_pic= req.body.userData.image,
+                user.role,
+                user.activated= true
                 
-            });
+            
 
-            newUser.save((err, user) => {
+                user.save((err, user) => {
 
                 if(err) throw err;
 
@@ -170,8 +190,17 @@ router.post('/validate-social-login', (req, res) => {
                 });
                 
 
-        });
+        }); 
     } else {
+
+        console.log('user activated');
+        const result = signTokenWithUser(user);
+
+        return res.json({
+                success: true,
+                token: 'bearer '+ result.token,
+                user: result.user
+            });
 
     }
 
