@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {  ToasterService, ToasterConfig } from 'angular5-toaster';
+
 import { UsersService } from './services/users.service';
 
 @Component({
@@ -39,8 +41,15 @@ export class UsersComponent implements OnInit {
     }
   };
 
+  public toasterconfig: ToasterConfig =  new ToasterConfig({
+    showCloseButton: true,
+    tapToDismiss: true,
+    timeout: 3000
+  });
+
   constructor(
-                private userService: UsersService
+                private userService: UsersService,
+                private toasterService: ToasterService
             ) { }
 
   ngOnInit() {
@@ -165,6 +174,13 @@ export class UsersComponent implements OnInit {
 
                   }
                       
+              },
+              (err) => {
+
+                  console.log(err);
+
+                  this.displayToast('Server error', this.TOAST_OPTIONS.FAILURE);
+
               });
 
       }
@@ -189,6 +205,13 @@ export class UsersComponent implements OnInit {
               }
 
               
+          },
+          (err) => {
+
+              console.log(err);
+
+              this.displayToast('Server error', this.TOAST_OPTIONS.FAILURE);
+
           });
 
   }
@@ -227,14 +250,19 @@ export class UsersComponent implements OnInit {
 
                   console.log(err);
 
-                  this.displayToast(err, this.TOAST_OPTIONS.FAILURE);
+                  this.displayToast('Server error', this.TOAST_OPTIONS.FAILURE);
 
               });
   }
 
-  displayToast(message, options){
+  displayToast(message, options) {
 
-      
-      
+    this.toasterService.pop(
+                                options.type,
+                                'New notification',
+                                !message && (options.type === 'failure') ?
+                                'Operation failed' : message || 'Operation successful'
+                            );
+
   }
 }

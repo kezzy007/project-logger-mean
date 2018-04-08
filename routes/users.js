@@ -14,6 +14,7 @@ const passport = require('passport');
 const config = require('../config/database');
 const jwt = require('jsonwebtoken');
 
+
 const ROLE_ADMIN = 'ADMIN';
 
 router.post('/register', (req, res, next) => {
@@ -63,23 +64,12 @@ router.post('/authenticate', (req, res, next) => {
 
                 if(isMatch){
 
-                    const tempUser = {
-                        "_id": user._id,
-                        "name": user.name,
-                        "email": user.email,
-                        "username": user.username,
-                        "role": user.role
-                    };
+                    const result = signTokenWithUser(user);
 
-                    // Create token
-                    let token = jwt.sign(tempUser, config.secret, {
-                        expiresIn: 604800 // 1 week,
-                    });
-
-                   return res.json({
+                    return res.json({
                         success: true,
-                        token: 'bearer '+ token,
-                        user: tempUser
+                        token: 'bearer '+ result.token,
+                        user: result.user
                     });
 
                 }
@@ -145,6 +135,68 @@ router.post('/projects', passport.authenticate('jwt', {session:false}), (req,res
     });
 
 });
+
+// This handles google login token verification
+router.post('/validate-social-login', (req, res) => {
+
+    const token = req.body.userData.id_token || ''; // For verification with google
+    const email = req.body.userData.email;
+
+    // Check of email exists in database
+
+    User.findOne({email: email}, (err, user) => {
+
+        if(!user.activated) {
+            //  If user is found with email, save other user properties if available
+            const newUser = new User({
+
+                name: req.body.userData.name,
+                profile_pic: req.body.userData.image,
+                role: 'admin',
+                email: email
+                
+            });
+
+            newUser.save((err, user) => {
+
+                if(err) throw err;
+
+                const result = signTokenWithUser(user);
+
+            return res.json({
+                    success: true,
+                    token: 'bearer '+ result.token,
+                    user: result.user
+                });
+                
+
+        });
+    } else {
+
+    }
+
+    });
+
+});
+
+function signTokenWithUser(user) {
+
+    const tempUser = {
+        "_id": user._id,
+        "name": user.name,
+        "email": user.email,
+        "username": user.username,
+        "role": user.role,
+        "profile_pic": user.profile_pic
+    };
+
+    // Create token
+    let token = jwt.sign(tempUser, config.secret, {
+        expiresIn: 604800 // 1 week,
+    });
+
+    return {'token': token, 'user': tempUser };
+}
 
 router.post('/save-project', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 

@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
     },
     password:{
         type: String,
-        required: true
+        required: false
     },
     role:{
         type: String,
@@ -26,6 +26,10 @@ const userSchema = mongoose.Schema({
     },
     skill: {
         type: String,
+        required: false
+    },
+    activated: {
+        type: Boolean,
         required: true
     }
 });
@@ -87,8 +91,6 @@ module.exports.addUser = function(newUser, callback){
             if(err) throw err;
 
             newUser.password = hashedPassword;
-
-            //User.find({'name': 'qasim'}).remove().exec();
 
             // Since newUser is a model object, it exhibits model properties
             newUser.save(callback);

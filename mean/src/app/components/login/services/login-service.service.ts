@@ -49,4 +49,25 @@ export class LoginService {
 
   }
 
+  validateUserToken(userData): Observable<any> {
+
+    return this.http.post<User>(this.host + '/users/validate-social-login', 
+                                { 
+                                  userData : userData
+                                })
+                .map((response) => {
+
+                  console.log('sdfsdf',response);
+
+                  if (response.success) {
+                    
+                    this.userLoggedIn.emit(true); // For navbar to display logout button
+
+                  }
+
+                  return response;
+                });
+
+  }
+
 }

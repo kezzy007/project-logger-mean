@@ -14,7 +14,7 @@ interface IUser {
 export class DashboardComponent implements OnInit {
 
   userAvatar;
-  folderPath = '../uploads/profile-pics/';
+  // folderPath = '../uploads/';
   tempAvatar = 'avatar.png';
 
   constructor(
@@ -30,6 +30,8 @@ export class DashboardComponent implements OnInit {
       this.router.navigateByUrl('/');
 
     }
+
+    console.log('obtained pic',this.getUser());
 
     // Sets the profile pic of user if exists
     ( (userProfilePic) => {
